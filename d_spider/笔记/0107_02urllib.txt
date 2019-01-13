@@ -1,0 +1,125 @@
+Urllib
+    内置库
+    urllib.request
+        它是最基本的HTTP请求模块，可以用来模拟发送请求。就像在浏览器里输入网址然后回车一样，只需要给库方法传入URL以及额外的参数，就可以模拟实现这个过程了。
+    urllib.parse
+        一个工具模块，提供了许多URL处理方法，比如拆分、解析、合并等。
+    
+    urllib.error
+        异常处理模块，如果出现请求错误，我们可以捕获这些异常，然后进行重试或其他操作以保证程序不会意外终止。
+    
+    urllib.robotparser
+        主要是用来识别网站的robots.txt文件，然后判断哪些网站可以爬，哪些网站不可以爬，它其实用得比较少。
+        
+
+
+1、urllib.request
+    1.1 urlopen
+        urllib.request.urlopen(url, data=None,[timeout, ]*, cafile=None, capath=None, cadefault=False, context=None)
+            url 打开URL，可以接受一个字符串的URL，或者一个Request对象；
+            data 该参数是可选的。如果要添加该参数，并且如果它是字节流编码格式的内容，即bytes类型，则需要通过bytes()方法转化。另外，如果传递了这个参数，则它的请求方式就不再是GET方式，而是POST方式。
+            timeout 该参数用于设置超时时间，单位为秒，意思就是如果请求超出了设置的这个时间，还没有得到响应，就会抛出异常。如果不指定该参数，就会使用全局默认时间。它支持HTTP、HTTPS、FTP请求。
+            context参数，它必须是ssl.SSLContext类型，用来指定SSL设置。此外，cafile和capath这两个参数分别指定CA证书和它的路径，这个在请求HTTPS链接时会有用。cadefault参数现在已经弃用了，其默认值为False。
+            
+
+
+
+
+urlopen
+    eg:
+    from urllib import request
+    html = request.urlopen(url='http://www.baidu.com',data=None)
+    print(html.read())
+
+parse
+    eg：
+    from urllib import request
+    from urllib import parse
+
+    data = {
+        'hello':'人工智能',
+        'wd':'python'
+    }
+    print(parse.urlencode(data))    # 输出：hello=%E4%BA%BA%E5%B7%A5%E6%99%BA%E8%83%BD&wd=python
+    data = bytes(parse.urlencode(data),encoding='utf-8')
+    # print(data)
+    response = request.urlopen('http://httpbin.org/post',data=data)
+    print(response.read().decode('utf-8'))
+
+
+响应
+    实例：
+        from urllib import request
+        response = request.urlopen('https://www.douban.com/')
+        print(type(response))       #获取响应信息的类型
+        print(response.status)      #获取状态码
+        print(response.getheaders)  #获取响应中的响应头
+        print(response.getheader('Date'))   #获取响应头中的Date字段的值
+        print(response.read().decode('utf-8'))  #读取响应体的内容，以utf8解码
+
+
+Request
+    urllib.request中的一个类
+    urllib.request.Request(url, data=None, headers={}, origin_req_host, unveriiable=False, method=None)
+        url 用于请求url，是必传参数，其他都是可选
+        data    必须是字节流类型（bytes），如果它是字典，可以先用urllib.parse模块里的urlencode()编码。date=None表示get请求
+        headers 字典，表示请求头，可以直接构造，也可以调用请求实例的add_header()方法添加
+        method  指定请求使用的方法，post get
+
+
+
+
+代理
+    ProxyHandler、build_opener
+    
+    >>> from urllib.request import ProxyHandler, build_opener
+    >>> proxy=ProxyHandler({'https':'https://119.101.116.63:9999'})
+    >>> opener = build_opener(proxy)
+    >>> res = opener.open('https://httpbin.org/get')
+    >>> print(res.read().decode('utf8'))
+    {
+      "args": {}, 
+      "headers": {
+        "Accept-Encoding": "identity", 
+        "Connection": "close", 
+        "Host": "httpbin.org", 
+        "User-Agent": "Python-urllib/3.7"
+      }, 
+      "origin": "119.101.116.63", 
+      "url": "https://httpbin.org/get"
+    }
+
+
+
+
+
+
+
+
+
+
+url拼接
+    >>> from urllib import parse
+    >>> wd = '机器学习'
+    >>> url = 'https:www.baidu.com/s?wd='+ parse.quote(wd)
+    >>> print(url)
+    https:www.baidu.com/s?wd=%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0
+
+
+反编码
+    s = '%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0'
+    parse.unquote(s)
+
+
+用字典分段拼接
+    base_url = 'https://www.lagou.com/jobs.positonAjax.json?'
+    params = {
+        'px': 'default',
+        'city': '深圳',
+        'Result': 'false'
+    }
+    url = base_url + parse.urlencode(params)
+    print(url)
+
+    https://www.lagou.com/jobs.positonAjax.json?px=default&city=%E6%B7%B1%E5%9C%B3&Result=false
+

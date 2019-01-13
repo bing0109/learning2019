@@ -1,0 +1,64 @@
+
+
+requests
+参考 http://localhost:8888/notebooks/bing/%E7%88%AC%E8%99%AB/%E8%AF%BE%E4%BB%B6/%E5%9F%BA%E7%A1%80/3.%20%E5%9F%BA%E6%9C%AC%E5%BA%93%E4%B9%8BRequests.ipynb
+
+    params = {
+        'wd': '人工智能',
+        'hello': 'world'
+    }
+    url = 'http://httpbin.org/get'
+    res6 = requests.get(url=url, params=params)
+
+    print(res6.text)     # 返回响应对象，主要用于获取文本
+    print(res6.content)  # 返回响应对象，结果前带有一个b，这代表是bytes类型的数据，主要用于获取 图片、文件等
+
+
+
+
+
+三者的区别详细请参考test.py文件
+
+urllib.request.urlopen()
+    from urllib import request
+    response = request.urlopen(url, data=None, [timeout, ]*, cafile=None, capath=None, cadefault=False, context=None)
+        url 打开URL，可以接受一个字符串的URL，或者一个Request对象
+        data 该参数是可选的。如果要添加该参数，并且如果它是字节流编码格式的内容，即bytes类型，则需要通过bytes()方法转化。另外，如果传递了这个参数，则它的请求方式就不再是GET方式，而是POST方式。
+        timeout 该参数用于设置超时时间，单位为秒
+
+
+urllib.request.Request()
+    from urllib import request
+    response = request.Request(url, data=None, headers={}, origin_req_host=None, unverifiable=False, method=None)
+
+requests
+    import requests
+    res1 = requests.get('http://httpbin.org/')
+
+    url = 'http://httpbin.org/put'
+    data = {'abc':124, 'cde':'ertert'}
+    res2 = requests.post(url=url,date=data,params=params,)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

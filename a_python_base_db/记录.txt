@@ -1,0 +1,65 @@
+Ubuntu系统
+	192.168.14.134
+	系统的用户名密码：bing/123	root/root
+	mysql数据库密码	root/root
+	
+
+PHPStudy
+	mysql数据库密码 root/root
+
+	
+PyCharm下载及安装教程
+https://blog.csdn.net/qq_38170230/article/details/78985232	
+
+virtualenv安装：
+https://blog.csdn.net/liu_xzhen/article/details/79293373
+
+	1.升级python包管理工具pip
+	
+	pip install --upgrade pip
+	
+	备注：当你想升级一个包的时候 `pip install --upgrade 包名`
+	2.python虚拟环境安装
+	
+	sudo apt-get install python-virtualenv
+	sudo easy_install virtualenvwrapper
+	上述工具装好后找不到mkvirtualenv命令，需要执行以下环境变量设置。
+	
+	1.创建目录用来存放虚拟环境
+		mkdir $HOME/.virtualenvs
+	2.在~/.bashrc中添加行：
+		export WORKON_HOME=$HOME/.virtualenvs
+		source /usr/local/bin/virtualenvwrapper.sh
+	3.运行:
+		source ~/.bashrc
+	3.创建python虚拟环境
+	
+	mkvirtualenv [虚拟环境名称]
+	workon [虚拟环境名称]
+	4.退出虚拟环境 离开 deactivate
+	
+	5.删除(慎用) 
+	rmvirtualenv [虚拟环境名称]
+	
+	
+	
+	
+Ubuntu修改时区和更新时间
+https://blog.csdn.net/zhengchaooo/article/details/79500032
+
+
+
+
+
+
+
+
+
+
+Git
+https://github.com/
+bing0109
+https://www.liaoxuefeng.com/wiki/0013739516305929606dd18361248578c67b8067c8c017b000
+
+Administrator@USER-20180705RP MINGW64 ~
+$ git config --global user.name "bing"

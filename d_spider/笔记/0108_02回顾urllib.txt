@@ -1,0 +1,77 @@
+昨日回顾
+
+爬虫基础知识
+1、http过程：请求过程、响应过程
+    1.1请求过程
+        a 请求方式 get/post
+        b 请求url
+        c 请求头
+            user-agent
+            referer
+            cookie
+        d 请求体
+            post方式有请求体、get没有
+    1.2响应过程
+        a 状态码
+            200 请求成功
+            3xx 重定向
+            4xx 客户端或网络问题
+            5xx 服务器的问题
+        b 响应头
+            记录cookie等信息
+        c 响应体
+            html、json、字节流等
+        
+2、爬虫
+    发请求，获取响应，提取响应信息，保存提取出来的信息
+    
+    2.1 模拟请求，接收响应
+        urllib/requests/selenium
+    2.2 提取信息
+        html：正则表达式，css选择器，xpath选择器
+            beautiful soup、pyquery
+        json：python中的json模块
+        图片、视频、音乐：都是二进制流的形式，直接保存即可
+    2.3 保存信息
+        文本：txt、csv、json等格式
+        数据库：mysql、mongodb、redies
+
+
+3、urllib请求库
+    urllib.request  请求模块，执行请求的操作
+    urllib.parse    解析url（编码、拆分、合并）
+    urllib.error    异常处理
+
+    3.1 urllib.request
+        1、response = urllib.request.urlopen(url, data=None, timeout)        执行请求
+            url     可以输入str，即请求的url；还可以输入Request对象
+            data    请求体，只能接受Bytes类型的数据，如果是None，那就是get请求，不为空就是post请求。
+            timeout 超时的设置，单位是秒
+            response是接收到的HttpResponse对象
+        2、urllib.request.Request(url, data=None,headers={},method)
+            Request对象，可以方便添加请求头
+            headers 请求头，可以接收字典格式
+            method  请求方式，如果data=None，默认是get请求
+        
+    3.2 获得响应
+        response=urllib.request.Request(url, data=None,headers={},method)
+            是接收到的HttpResponse对象
+        response.read() 读取响应体，返回的是二进制
+        response.read().decode('utf8')  返回的是字符串
+        response.status 获取状态码
+        response.getheaders()   获取响应头
+        response.getheader('name')  获取响应头中的某个字符串
+
+
+    3.3 urllib.parse
+        urllib.parse.urlencode(dict)    url编码，输入是字典
+        urllib.parse.quote(str)     url编码，输入的是字符串
+        urllib.parse.unquote(str)   url反编码
+
+    3.4 urllib.error
+        urllib.error.URLError
+        urllib.error.HTTPError  是URLError的子类
+        进行异常捕获的时候，一般是先子类，后父类；先子类可获取更细分的处理
+
+
+

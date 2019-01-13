@@ -1,0 +1,356 @@
+{% extends './base_hr.html' %}
+
+{% block pg_head %}
+
+<!--样式引用自己写的文件或直接写在headblock中的style中都行-->
+<!--<link rel="stylesheet" type="text/css" href="/static/css/cjb/jobneed.css" charset="utf8">-->
+    <title>tester</title>
+
+<!--<div>-->
+    <style xmlns="http://www.w3.org/1999/html">
+        p{
+            margin:0px;
+        }
+        .panel-body {
+            padding: 5px 15px;
+        }
+        .panel-heading {
+            padding: 5px 15px;
+        }
+
+        .table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+            padding: 8px 15px;
+        }
+        hr{
+            margin: 10px 0px;
+        }
+        .alert {
+        display: none;
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        min-width: 200px;
+        margin-left: -100px;
+        z-index: 99999;
+        padding: 15px;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        }
+
+        .alert-success {
+            color: #4cae4c;
+            background-color: #ffff00;
+            border-color: #d6e9c6;
+        }
+
+        .alert-info {
+            color: #31708f;
+            background-color: #d9edf7;
+            border-color: #bce8f1;
+        }
+
+        .alert-warning {
+            color: #8a6d3b;
+            background-color: #fcf8e3;
+            border-color: #faebcc;
+        }
+
+        .alert-danger {
+            color: #a94442;
+            background-color: #f2dede;
+            border-color: #ebccd1;
+        }
+        .tester_td_title td{
+            font-weight: bold;
+            padding: 5px 3px;
+        }
+        .tester_td_body td{
+            padding: 5px 3px;
+        }
+
+    </style>
+{% endblock %}
+
+
+
+{% block pg_body %}
+    <div>
+        <div class="btn-group col-xs-4" style="padding-left: 0px;" role="group" aria-label="...">
+            <button type="button" id="btn_add" class="btn btn-default">新增求职者</button>
+            <button type="button" class="btn btn-default">刷新</button>
+        </div>
+
+        <div class="dropdown col-xs-2">
+            <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                筛选
+                <span class="caret"></span>
+                </button>
+            <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="#">未邀请测试</a></li>
+                <li><a href="#">已邀请测试</a></li>
+                <li><a href="#">已完成测试</a></li>
+                <li><a href="#">已通过测试</a></li>
+            </ul>
+        </div>
+        <div class="row">
+          <div class="col-xs-6">
+            <div class="input-group">
+              <input type="text" class="form-control" placeholder="搜索职位名称">
+              <span class="input-group-btn">
+                <button class="btn btn-default" type="button">搜索</button>
+              </span>
+            </div>
+          </div>
+        </div>
+    </div>
+    <hr>
+
+
+    <div class="panel panel-default">
+      <!-- Default panel contents -->
+      <!--<div class="panel-heading">Panel heading</div>-->
+        <!--<div class="panel-body">-->
+            <!--<div>-->
+                <!--<td style="float: left;width: 10%;font-weight: bold">序号</td>-->
+                <!--<td style="float: left;width: 10%;font-weight: bold">姓名</td>-->
+                <!--<td style="float: left;width: 10%;font-weight: bold">性别</td>-->
+                <!--<td style="float: left;width: 10%;font-weight: bold">状态</td>-->
+                <!--<td style="float: left;width: 20%;font-weight: bold">应聘职位</td>-->
+                <!--<td style="float: left;width: 20%;font-weight: bold">添加HR</td>-->
+                <!--<td style="float: left;width: 20%;font-weight: bold">操作</td>-->
+            <!--</div>-->
+        <!--</div>-->
+      <!-- Tabl e -->
+        <table class="table">
+            <tr class="tester_td_title">
+                <td>序号</td>
+                <td>姓名</td>
+                <td>性别</td>
+                <td>状态</td>
+                <td>应聘职位</td>
+                <!--<td>添加HR</td>-->
+                <td>操作</td>
+            </tr>
+            {% for te in obj_tes %}
+            <tr class="tester_td_body" id="tester_{{ te.id }}">
+                <td>{{ forloop.counter }}</td>
+                <td>{{ te.name }}</td>
+                <td>{% if te.sex == True %}男{% else %}女{% endif %}</td>
+                <td>{% if te.status == 0 %}未邀请测试{% elif te.status == 1 %}已邀请测试{% elif te.status == 2 %}已完成测试{% elif te.status == 3 %}通过测试{% else %}淘汰{% endif %}</td>
+                <td>{{ te.jobneed_id__jobneed_name }}</td>
+                <!--<td>{{ te.create_hr_id__user }}</td>-->
+                <td>
+                    <a href="javascript:void(0);" id="tester_detail_{{ te.id }}">查看</a>
+                    <a href="javascript:void(0);" id="tester_edit_{{ te.id }}">编辑</a>
+                    <a href="javascript:void(0);" id="tester_del_{{ te.id }}">删除</a>
+                    {% if te.status < 1 %}<a href="#">邀请测试</a>
+                    {% elif te.status == 1 %}<a href="#">查看测试题目</a>
+                    {% elif te.status > 1 %}<a href="#">查看测试报告</a>{% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+
+
+
+
+<!--新增按钮弹框-->
+<div class="modal fade" id="Modal_add" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="height: 56px;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="myModalLabel" style="font-weight: bold">新增</h4>
+            </div>
+            <form action="/cjb/tester_add/" method="post">
+                {% csrf_token %}
+                <div class="modal-body" style="height: 400px;">
+                    <div class="input-group col-xs-12" style="margin-bottom:15px;padding: 0px 10px" >
+                        <span class="input-group-addon" style="font-weight: bold" id="basic-addon1">姓名</span>
+                        <input type="text" id="te_name" name="te_name" required="required" class="form-control" placeholder="求职者姓名" aria-describedby="basic-addon1">
+                    </div>
+                    <div class="form-group col-xs-12" style="margin-bottom:15px;padding: 0px 10px" >
+                        性别：<input type="radio" name="te_sex" checked="checked" value="1"/>男&nbsp;<input type="radio" name="te_sex" value="0"/>女
+                    </div>
+
+                    <div class="form-group col-xs-12" style="padding: 0px 10px;">
+                      <span style="float: left;width: 30%;">应聘岗位：</span><select id="te_jn_sel" class="form-control " style="float: left;" name="te_jn_select">
+
+                        <!--{% if ob_jns.length == 0 %}<option id="no_option">没有选项</option>-->
+                        <!--{% else %}{% for jn in ob_jns %}-->
+                        <!--<option id="{{ jn.id }}">{{ jn.name }}</option>-->
+                        <!--{% endfor %}{% endif %}-->
+                      </select>
+                    </div>
+
+                    <div class="col-xs-12" style="margin-bottom:15px;padding: 0px 10px">
+                        <div class="panel panel-info" style="padding: 0px;margin-bottom: 10px;">
+                            <div class="panel-heading">
+                            <h3 class="panel-title">备注</h3>
+                          </div>
+                          <div class="panel-body" style="padding: 0px;">
+                            <textarea name="te_comment" required="True" id="te_comment" style="border: 0px;resize: none;" rows="3" class="form-control" placeholder="备注"></textarea>
+                          </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-xs-12" style="padding: 0px 10px;">
+                        <input type="checkbox" name="te_invite" value="invite">&nbsp;现在邀请测试
+                    </div>
+
+                </div>
+                <div class="form-group modal-footer" style="height: 65px;">
+                    <button type="button" class="btn btn-default" data-dismiss="modal"><span aria-hidden="true"></span>关闭</button>
+                    <button type="submit" id="submit_add_jn" class="btn btn-primary" ><span aria-hidden="true"></span>保存</button>
+                </div>
+            </form>
+
+        </div>
+    </div>
+</div>
+
+
+
+<!--获取职位模板-->
+<div class="modal fade" id="select_job_template" tabindex="-1" role="dialog" data-backdrop="static" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="height: 56px;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="" style="font-weight: bold">选择职位名称</h4>
+            </div>
+            <div class="modal-body" style="height: 400px;">
+                <div class="input-group col-xs-12" style="margin-bottom:15px;padding: 0px 10px" >
+                    <span class="input-group-addon" style="font-weight: bold">选择职位模板</span>
+                    <input type="text" id="jn_temp" name="jn_temp" class="form-control" placeholder="职位模板" aria-describedby="basic-addon1">
+                </div>
+            </div>
+            <div class="form-group modal-footer" style="height: 65px;">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><span aria-hidden="true"></span>关闭</button>
+                <button type="submit" id="submit_add_temp" class="btn btn-primary" data-dismiss="modal"><span aria-hidden="true"></span>保存</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="alert"></div>
+
+{% endblock %}
+
+{% block pg_script %}
+    <!--调用自己写的脚本，或直接在下面写都行-->
+    <!--<script type="text/javascript" src="/static/js/cjb/jobneed.js"></script>-->
+
+    <script>
+
+    // 添加tester，弹框
+    $('#btn_add').click(function () {
+        // ajax获取职位需求列表
+        $.ajaxSetup({data:{csrfmiddlewaretoken:'{{ csrf_token }}'}})
+        $.ajax({
+            type:'POST',
+            url: '/cjb/get_jn_list/',
+            dataType: 'JSON',
+            success(data1) {
+                // alert('success')
+                var data = JSON.parse(data1)    //
+                // console.log(data,data.length,data.constructor,data[0].id)
+                $('#te_jn_sel').empty()
+                $('#te_jn_sel').append('<option id="no_option" value="0">待定</option>-->')
+                if(data.length == 0){
+                    $('#te_jn_sel').append('<option id="no_option" value="0">'+'没有职位'+'</option>')
+                }
+                else{
+                    for(var i = 0; i < data.length; i++){
+                        // console.log(data[i].id,data[i].jobneed_name,'----')
+                        $('#te_jn_sel').append('<option value='+data[i].id+'>'+data[i].jobneed_name+'</option>')
+                    }
+                    // 用下面的for-in也可以达到目的
+                    // for(var jn in data){
+                    //     console.log(data[jn].id,data[jn].jobneed_name,'-123---')
+                    //     // $('#te_jn_sel').append('<option id='+data[i].id+'>'+data[i].jobneed_name+'</option>')
+                    // }
+                }
+            },error(data){
+                alert('fail')
+            }
+        });
+
+        $('#myModalLabel').text('新增测试人员')
+        $('#Modal_add').modal();
+    });
+
+    // // 提交职位需求
+    // $('#submit_add_jn').click(function () {
+    //     var jn_name = $('#jn_name').val()
+    //     let jn_desc = $('#jn_describe').val()
+    //     let jn_requ = $('#jn_require').val()
+    //     let jn_model = $('#jn_model').val()
+    //     let data_jn_add = {'jn_name':jn_name, 'jn_desc':jn_desc, 'jn_requ':jn_requ, 'jn_model':jn_model, }
+    //
+    //     console.log(data_jn_add,'----data_jn_add--------')
+    //
+    //     $.ajaxSetup({data:{csrfmiddlewaretoken:'{{ csrf_token }}'}})
+    //     $.ajax({
+    //         type:'POST',
+    //         url: '/cjb/jobneed_add/',
+    //         data: data_jn_add,
+    //         success(result) {
+    //             alert('success')
+    //         },error(result){
+    //             alert('fail')
+    //         }
+    //     })
+    // });
+
+    // 选择jobneed模板 模态框
+    $('#sel_job_tem').click(function () {
+         $('#select_job_template').modal();
+    });
+
+    // 删除tester
+    $('[id^=tester_del_]').click(function () {
+        let conf_del = confirm('确定要删除此条面试者记录吗？相关测试报告也都将被删除！')
+        let te_id = $(this).attr('id').match(/tester_del_(\d*)/)[1]
+        console.log(conf_del,te_id,'---te del---')
+        if (conf_del){
+            $.ajaxSetup({data:{csrfmiddlewaretoken: '{{ csrf_token }}'}})
+            $.ajax({
+                type: 'POST',
+                url: '/cjb/tester_del/',
+                dataType: 'json',    //后台用return JsonResponse()
+                // dataType: 'text',       //后台用return HttpResponse()
+                data: {'id':te_id},
+                success: function(result) {
+                    console.log(result,'----success----');
+                    var te_id = 'tester_'+result.del_id
+                    // var next_tr = $('#'+te_id).nextAll().filter('tr').children('td')[0]
+                    var next_trs_td = $('#'+te_id).nextAll().find('td:eq(0)')
+
+                    if(next_trs_td.length != 0) {
+//                        console.log(next_trs_td, next_trs_td[1].innerHTML,'---next-trs---')
+
+                        for (var i = 0; i < next_trs_td.length; i++){
+                            console.log(next_trs_td[i].innerHTML,next_trs_td[i].innerHTML-1, '---tdd----')
+                            next_trs_td[i].innerHTML -= 1
+                        }
+                    }
+
+                    $('#'+te_id).remove()
+                    $('.alert').html(result.del_result).addClass('alert-success').show().delay(2500).fadeOut();
+                },error: function(result) {
+                    console.log(result,'----error---');
+                    alert('访问失败')
+                }
+            })
+        }
+    })
+
+
+    </script>
+
+{% endblock %}
+
+<!--</div>-->
+

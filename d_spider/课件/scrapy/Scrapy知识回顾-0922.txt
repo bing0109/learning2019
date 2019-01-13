@@ -1,0 +1,73 @@
+1、基本原理
+引擎（Engine）：控制数据流的走向，其他的模块产生的数据（item/request/response等），先要流经引擎，通过引擎进行分发；
+调度器（Scheduler）:调度请求，主要维护一个请求队列，新的请求过来是将该请求先放到请求队列里面，后面需要时从队列里面调度
+爬虫（Spiders）:主要实现爬取逻辑和数据提取。可以维护多个Spider
+管道（Item pipeline）:主要用来对spider提取item信息，进行相应的处理，或者进行数据保存
+下载器（Downloader）：主要是用来跟网络进行交互，发送请求，并获得响应，主要进行Http的过程。
+中间件（Middleware）：有两种中间件，DownloaderMiddleware:主要是对请求、响应、异常进行一些自定义的处理；SpiderMiddleware：用的比较少，主要是用来的处理数据。
+
+2、命令行工具
+scrapy startproject <projectname>#创建一个scrapy项目
+scrapy genspider <spidername> <domain>#创建一个spider，依赖项目
+scrapy crawl <spidername>#执行某个spider,依赖项目
+scrapy view <ulr> #查看对应‘url’的包含的信息，可以用来查看网页框架哪些部分是通过js渲染的
+scrapy shell <url>#主要是进行调试，模拟对‘url’，进行请求，获得响应
+scarpy bench#查看当前终端的爬取能力
+scrapy settings --get=<name>#获取settings里面设置的'name'的信息
+scrapy check <spidername>#主要查看某个spider的语法错误
+
+3、Item Pipeline
+#主要用来处理或者保存数据
+3.1 def process_item(self,item,spider)#每个组件都需要调用该方法，主要可以对item进行处理。只可以返回两种类型的对象
+返回item，是为了方便后面的process_item方法进行处理
+返回DropItem，把不满足要求的Item丢弃
+3.2 def from_crawler(cls,crawler)#是一个@classmethod,常用于从settings获取对应的设置，配合进行初始化
+3.3 def open_spider(self,spider)#可以在spider开启时，执行该函数，例如跟数据库进行连接
+3.4 def close_spider(self,spider)#可以在spider关闭时，执行该函数，例如跟数据库断开跟数据库的连接
+
+4、Selector(选择器)
+response.css('.class #id p')#定位到某个节点
+response.css('div[class*="image"]')#节点‘class’属性包含‘image’
+response.css('.class #id::text')#定位到文本信息
+response.css('.class #id::attr(href)')#定位到属性信息
+response.css('.class #id::text').extract()#提取满足要求的所有信息，返回的是列表
+response.css('.class #id::text').extract_first()#提取满足要求的第一个信息，其余的忽略
+
+response.xpath('//div[@class="name"]')#定位到某个节点
+response.xpath('//div[contains(@class,"image")]')#节点‘class’属性包含‘image’
+response.xpath('//div[@class="name"]/text()')#定位到文本信息
+response.xpath('//div[@class="name"]/@href')#定位到属性信息
+response.xpath('//div[@class="name"]/@href').extract()#提取满足要求的所有信息，返回的是列表
+response.xpath('//div[@class="name"]/@href').extract_first()#提取满足要求的第一个信息，其余的忽略
+
+#可以通过正则表达式提取信息
+response.xpath('//div[@class="name"]/text()').re(r'name:(.*?)')#返回所有满足要求的信息
+response.xpath('//div[@class="name"]/text()').re_first(r'name:(.*?)')#返回第一个满足要求的信息
+
+5、Spiders
+主要实现爬取逻辑和数据提取。
+5.1 基本属性
+name#表示spider的名字，在整个项目里面要保证唯一性
+allow_domains=[example.com]#可选项，要求后面一系列的请求在允许的‘example.com’路径下
+start_urls=[url]#初始请求的url列表
+custom_settings={}#局部变量，可以用来在spider里面覆盖settings某个设置
+self.settings.get()#获取settings里面的设置
+self.logger.debug()/self.logger.info()#显示输出，类似于print()
+5.2 常用方法
+def start_request(self)#改写出事请求
+   yield scrapy.Request(url,callback=self.parse)
+def close(self,reason)#关闭spider时执行该函数
+
+6、DownloaderMiddleware(下载器的中间件)
+主要是对请求、响应、异常进行一些自定义的处理
+6.1 def process_request(self,request,spider)#处理请求，可以返回4中类型
+return None#对request进行相应的处理（例：代理），不改变整个scrapy的流程;
+return Request#请求需要重新进行调度，改变原来的流程;
+return Response#返回response对象(例：response可以通过渲染库selenium获取)，将response对象经过其他的process_response处理之后，流入engine;
+6.2 def process_response(self,request,response,spider)#处理响应，可以返回3种类型
+return Response#不改变原来的执行流程，返回的response可以是新构建的也可以是原来的
+return Request#改变原来的执行流程，将对应请求重新调度执行
+6.3 def process_exception(self,request,exception,spider)#处理异常，可以返回3种类型
+return None#只对异常进行相应处理，不改变原来流程
+return Request#将产生异常的那条请求，重新进行调度，比较常用：错误重试
+return Response#根据异常出现的对应请求，构建response对象，改变原来的执行流程

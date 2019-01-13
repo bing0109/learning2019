@@ -1,0 +1,216 @@
+1、爬虫的基础知识
+1.1 http过程：请求过程、响应的过程
+1.1.1 请求过程
+(1)请求方式：get/post
+(2)请求url：url是统一资源定位符，有两个功能：一是起到名字标识作用，二是指明感兴趣的资源的位置（IP）
+(3)请求头：
+user-agent:主要是用来识别客户端的请求是机器请求，还是浏览器请求；
+referer:说明当前请求的url，从哪一个url来的；
+cookie:记录会话信息，在爬虫里面主要是用来做模拟登陆；
+(4)请求体
+post方式有请求体/get方式没有请求体
+1.1.2 响应过程
+(1)状态码
+200：请求成功
+3**:重定向的问题(301/302)
+4**:客户端的问题(404:Not Found,403:禁止访问)
+5**：服务器的问题
+(2)响应头
+记录了cookie信息，做一个cookie池
+(3)响应体
+重要的部分：html/json/二进制流等
+1.2 爬虫：获取响应，并响应信息进行提取，最后进行保存的过程
+1.2.1 获取响应
+模拟浏览器，进行请求，并获得响应。python方面的请求库：urllib/requests/selenium
+1.2.2 提取信息
+html:正则表达式、css选择器(Beautifulsoup、pyquery)、xpath(lxml)
+json:python里面json
+图片、视频、音乐：都是二进制流的形式，直接进行保存
+1.2.3 保存信息
+文本：txt/csv/json等文件格式
+数据库：MySQL/MongoDB/Redis
+
+2.urllib请求库
+urllib.request:请求模块，执行请求的操作
+urllib.parse:解析url（编码、拆分、合并）
+urllib.error:异常处理
+2.1 urllib.request
+response=urllib.request.urlopen(url,data=None,timeout)#执行请求
+#url:可以输入str,就是请求的url；还可以输入Request对象
+#data:请求体，只能接受Bytes类型的数据；如果是None，那就是get请求，否则就是post请求
+#timeout:超时的设置
+urllib.request.Request(url,data=None,headers={},method)#Request对象，可以方便添加请求头
+#headers：请求头，可以输入字典的格式
+#method：请求方式，如果data=None，默认是'GET'
+2.2 获得响应
+response是一个HttpResponse的对象
+response.read()#获得响应体，返回的是二进制
+response.read().decode('utf8')#返回的是字符串
+response.status#获取状态码
+response.getheaders()#获得响应头
+response.getheader('name')#获得某个字段的值
+2.3 urllib.parse
+urllib.parse.urlencode(dict)#url编码，输入的是字典
+urllib.parse.quote(str)#url编码，输入的字符串
+urllib.parse.unquote(str)#url编码
+2.4 urllib.error
+urllib.error.URLError#
+urllib.error.HTTPError#是URLError的子类
+进行异常的捕获的时候，一般是先子类，后父类
+
+3.requests
+3.1 请求方式
+requests.get()#实现get请求
+requests.post()#实现post()请求
+3.2 requests.get
+response=requests.get(url,params=None,headers={},cookie={},proxies={},timeout)
+#url:请求url，如果params=None,url指的是完整的url；如果params不为空，输入字典格式，请求url包含params部分；
+#headers:请求头,输入字典格式
+#proxies：代理的ip和端口，输入字典的形式，例如：{'http':'http://ip:port'}
+#timeout:超时设置
+3.3 requests.post
+response=requests.post(url,params=None,headers={},data={},cookie={},proxies={},timeout)
+#data:请求体，输入字典形式
+3.4 获得响应
+response为通过请求获得的响应
+response.status_code#获取状态码
+response.headers#获得响应头
+response.headers['name']#获取指定‘name’对应的值
+response.cookie#获得cookie
+#获得响应体
+response.text#获得的是字符串，一般对应的响应体为html源码
+response.content#获得二进制流，一般针对图片、视频等
+response.json()#自带json解码器，针对响应体为json字符串
+3.5 异常
+from requests import exception
+exception.RequestException#最底层的异常，只要出现关于请求方面异常，都可以进行捕获
+exception.HTTPError#关于HTTP协议方面的异常，继承于RequestException
+exception.ConnectionError#关于连接方面的异常，继承于RequestException
+exception.TimeOut:继承与RequestException，关于超时方面的异常,包括ReadTimeOut和ConnectionTimeOut
+
+4.正则表达式
+4.1 匹配规则
+\d:表示匹配数字，等价于[0-9]
+[...]:表示'[]'里面的任意一个满足匹配
+\s:表示空白字符，\t\n\r\f
+\w:表示字母、数字、下划线
+.:表示除换行符以外的任意字符
+*:0个或多个
++：1个或多个
+？：0（可以没有）或1（可以有），一般用分贪婪模式
+.*:通用匹配，贪婪模式
+.*？:通用匹配，非贪婪模式
+\:转义字符
+():分组，目标匹配
+修饰符：
+re.S:'.'可以匹配包括换行符在内的任意字符
+re.I:对大小写不敏感
+4.2 re.match
+必须从字符串头开始匹配
+re.match(r'',str,re.S|re.I)
+4.3 re.search(r'',str,re.S|re.I)#可以从任意位置开始匹配，只会返回满足匹配的第一条信息
+4.4 re.findall(r'',str,re.S|re.I)#可以从任意位置开始匹配，返回所有满足要求的信息，返回的列表
+4.4 re.sub(r'',target,str,re.S|re.I)#替换，将满足匹配要求的字符替换成‘target’
+4.5 re.complie(r'',re.S|re.I)#对正则进行编译，方便复用
+
+5.BeautifulSoup
+5.1 解析器
+soup=BeautifulSoup(html,'html.parser')#python标准库的解析器，只能针对html字符串
+soup=BeautifulSoup(html,'lxml')#lxml解析器，执行速度快
+5.2 节点选择器
+soup.p#针对节点的名称进行定位，返回满足要的第一条，其他的忽略
+soup.p.a#也可以进行嵌套使用
+5.3 获得信息
+5.3.1 获取文本信息
+soup.p.get_text()/soup.p.string
+5.3.2 获取属性信息
+soup.p.attrs['name']/soup.p['name']
+soup.p.attrs#返回的是字典，包含节点所有的属性信息
+5.4 关联选择器
+5.4.1 子孙节点和子节点
+soup.p.children/soup.p.contents#获取子节点
+soup.p.descendants#获取子孙节点
+5.4.2 父节点和祖先节点
+soup.p.parent#获取父节点
+soup.p.parents#获取祖先节点
+5.4.3 兄弟节点
+soup.p.previous_sibling#获取上一个哥哥节点
+soup.p.previous_siblings#获取所有的哥哥节点
+soup.p.next_sibling#获取下一个弟弟节点
+soup.p.next_siblings#获取所有的弟弟节点
+5.5 方法选择器
+soup.find_all(name,attrs,text)#返回所有满足要求的节点，返回list
+#name:标签名称
+#attrs：属性，例如：attrs={'class':'class_name'}；属性id/class_,可以直接用值进行定位：class_=class_name
+#text:text可以输入字符串，也可以接受re.compile()
+soup.find(name,attrs,text)#返回满足要求的第一个节点
+5.6 CSS选择器
+soup.select('element .class #id')
+所有的选择器都可以嵌套使用。
+
+6. selenium
+6.1 声明浏览器
+form selenium import webdriver
+browser = webdriver.Chrome()#声明Chrome浏览器
+6.2 访问网址
+browser.get('http://www.baidu.com')#访问网址
+browser.page_source#获取渲染之后的html源码字符串
+6.3 查找节点
+6.3.1 查找单个节点，返回满足要求的第一个节点
+a=browser.find_element_by_css_selector('#id .class element')#基于css选择器查找节点
+browser.find_element_by_id('id_name')#基于属性id名称查找节点
+from selenium.webdriver.common.by import By
+browser.find_element(By.CSS_SELECTOR,'#id .class element')#基于css选择器查找节点
+6.3.2 查找多个节点，返回满足要求的所有节点
+browser.find_elements_by_css_selector('#id .class element')#基于css选择器查找节点
+from selenium.webdriver.common.by import By
+browser.find_elements(By.CSS_SELECTOR,'#id .class element')#基于css选择器查找节点
+6.4 获取信息
+a是查找到的某个节点
+a.get_attribute('attr_name')#获取属性信息
+a.text#获取文本信息
+6.5 节点交互
+input指定的是查找到的输入框的节点变量
+input.send_keys(KEYWORD)#输入文本框
+input.clear()#清空文本框
+button指定的是查找到的按钮的节点变量
+button.click()
+6.6 动作链
+from selenium.webdriver import ActionChains
+chain = ActionChains(browser)#声明动作链
+....#说明一系列的动作：拖拽、双击等
+chain.perform()
+6.7 execute_script
+browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')#拖拽进度条到底
+6.8 延时等待
+6.8.1 隐式等待
+browser.implicitly_wait(10)
+#隐式等待，针对后面出现的所有find_element/find_elements,如果查找就继续执行下面动作，如果没有查找到，##继续等待10秒，时间到了之后，还有没有找到，就抛出异常。
+6.8.2 显式等待
+可以进行查找节点，也可以用来做判断
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+wait=WebDriverWait(browser,10)#声明显式等待
+wait.until(EC.presence_of_element_located((By.CSS_SELECTOR,'#id .class element')))#对某个节点进行判断
+判断方式
+EC.presence_of_element_located#判断某个节点是否存在
+EC.element_to_be_clickable#判断某个节点是否可以被点击
+EC.text_to_be_present_in_element#判断某个节点是否包含某个文本
+6.9 前进和后退
+browser.back()#后退
+browser.forward()#前进
+6.10 关于cookie
+browser.get_cookies()#获取cookie
+browser.add_cookie(dict)#添加cookie,输入字典
+browser.delete_all_cookies()#清空
+6.11 异常
+from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import StaleElementReferenceException
+from selenium.common.exceptions import NoSuchElementException
+TimeoutException#超时异常，出现在显式等待超出对应时间之后抛出的异常
+NoSuchElementException#find_element/find_elements没有查找到节点时，抛出的异常
+StaleElementReferenceException#主要出现在js渲染时，已经查找到的节点进行交互时，出现失焦，抛出的异常
+6.12 选项卡
+browser.execute_script('window.open()')#打开一个选项卡
+browser.switch_to_window(browser.window_handles[1])#切换对应选项卡窗口，之后就可以进行相应的一些操作

@@ -1,0 +1,2 @@
+建表和字段的要求：
+	在每个表多加一个字段:isdelete=models.booleanField(default=false)

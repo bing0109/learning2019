@@ -1,0 +1,54 @@
+1.常见抓包工具
+    F12         浏览器快捷键
+    fiddler
+    wireshark
+    burpsuit
+    
+    
+2.抓包原理
+    浏览器---->请求----->服务器
+    服务器---->响应----->浏览器
+
+    抓包工具处于浏览器 与 服务器 之间
+    
+3.抓包数据
+    基础数据
+        状态码
+        请求方法
+        文件
+        域名
+        文件类型
+        文件大小
+        加载时间
+        
+    a.请求头信息
+        Request URL:            请求地址
+        Request Method:         请求方法
+        accept                  可解析的文件类型
+        accept-encoding         压缩方式
+        Accept-Language         语言
+        Cookie                  cookie
+        User-Agent              客户端信息
+            
+    b.请求体信息
+        get请求无请求体信息
+        
+     
+    c.响应头信息
+        Status Code 状态码
+        date        时间
+        server      web服务器版本
+        
+    d.响应体
+        网站代码
+        
+    
+    
+    
+        
+    
+
+
+
+
+

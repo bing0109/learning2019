@@ -1,0 +1,17 @@
+
+p{
+    margin:0px;
+}
+.panel-body {
+    padding: 5px 15px;
+}
+.panel-heading {
+    padding: 5px 15px;
+}
+
+.table > thead > tr > th, .table > tbody > tr > th, .table > tfoot > tr > th, .table > thead > tr > td, .table > tbody > tr > td, .table > tfoot > tr > td {
+    padding: 8px 15px;
+}
+hr{
+    margin: 10px 0px;
+}

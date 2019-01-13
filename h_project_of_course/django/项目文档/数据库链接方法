@@ -1,0 +1,3 @@
+数据库连接方法：mysql -u root -P3306 -h192.168.6.255 -p
+数据库密码：admin
+数据库名称：careertest

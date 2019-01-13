@@ -1,0 +1,10 @@
+
+#companydiv{
+    float:left;
+    padding:0;
+    margin:0 auto;
+}
+ul li{
+    float:left;
+    list-style:none;
+}

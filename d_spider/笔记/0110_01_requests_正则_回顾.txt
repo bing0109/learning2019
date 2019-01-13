@@ -1,0 +1,81 @@
+requests
+
+1.请求方式
+    requests.get()
+    requests.post()
+    
+2.requests.get
+    response = requests.get(url, params=None,headers={},data={},cookie={},proxies={'http':'http://ip:port'},timeout)
+        url：请求url，如果params=None，url指的是完整的url，如果params不为None，接收字典格式，实际请求url包含url和params的部分
+        headers：请求头，输入字典格式
+        proxies：代理的ip和端口，输入字典格式
+        timeout: 超时
+        
+3. requests.post
+    response = requests.post(url, params=None,headers={},data={},cookie={},proxies={'http':'http://ip:port'},timeout)
+        data: 请求体，接收字典格式
+        
+4、获得响应
+    response 为通过请求获得的响应
+    response.status_code    获取状态码
+    response.headers    获取响应头
+    response.headers['name']        获取header中‘name’对应的值
+    response.cookie         获取cookie
+    
+    获的响应体
+    response.text       获取字符串，一般对应的响应体位html源码
+    response.content    获取二进制流，一般用于获取图片，视频等
+    response.json()     py自带的json解码器，针对响应体为json的字符串
+    
+5、异常
+    from requests import exception
+    
+    exception.RequestException  最底层的异常，只要出现关于请求方面的异常，都可以进行捕获
+    exception.HTTPException     关于HTTP协议方面的异常，继承于RequestException
+    exception.ConnectionError   关于链接方面的异常，继承于RequestException
+    exception.TimeOut           关于超时方面的异常，包括ReadTimeOut和ConnectionTimeOut
+    
+    
+
+
+
+正则表达式
+1、常用规则
+    \d  表示匹配数字，等价于[0-9]
+    [...]   表示匹配[]里面的任意一个字符
+    \s  表示空白字符，\t\n\r\f
+    \w  表示字母、数字、下划线
+    .   除换行符以外的任意字符
+    *   0个或多个
+    +   1个多多个
+    ?   0或1，可以由或没有，一般用非贪婪模式
+    .*  通用匹配，贪婪模式
+    .*? 通用匹配，非贪婪模式
+    \   转义
+    ()  分组，目标匹配
+
+    修饰符
+        re.S    表示 . 可以匹配包括换行符在内的任意字符
+        re.I    对大小写不敏感
+
+
+2、re.match(r'', str, re.S|re.I)
+    必须从头开始匹配
+    
+
+3、re.search
+    可以从任意位置开始匹配，只会返回满足匹配条件的第一条信息
+    
+4、re.findall(r'', str, re.S)
+    可以从任意位置开始匹配，返回所有满足条件的信息，返回列表
+
+5、re.sub(r'', target, str, re.S)
+    替换，将满足匹配邀请的字符替换成 target
+    
+6、re.complie(r'', re.S|re.I)
+    对正则进行编译，方便复用
+
+
+
+
+

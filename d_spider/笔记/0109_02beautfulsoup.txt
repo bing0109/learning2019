@@ -1,0 +1,142 @@
+BeautifulSoup
+python针对HTML或XML的解析库
+
+pip install beautifulsoup4
+
+
+解析器
+    1、python标准库     BeautifulSoup(markup, "html.parser")
+    2、lxml HTML解析器  BeautifulSoup(markup, "lxml")
+    3、lxml XML解析器   BeautifulSoup(markup, "xml")
+    4、html5lib解析器   BeautifulSoup(markup, "html5lib")
+
+    常用的是前两个
+
+
+基本用法
+    html = '''
+        <html><head><title>The Dormouse's story</title></head>
+        <body>
+        <p class="title aaa" name="dromouse">how are you<b>The Dormouse's story</b></p>
+        <p class="story">Once upon a time there were three little sisters; and their names were
+        <a href="http://example.com/elsie" class="sister" id="link1"><!-- Elsie --></a>,
+        <a href="http://example.com/lacie" class="sister" id="link2">Lacie</a> and
+        <a href="http://example.com/tillie" class="sister" id="link3">Tillie</a>;
+        and they lived at the bottom of a well.</p>
+        <p class="story">...</p>
+    '''
+    soup = BeautifulSoup(html,'lxml')
+
+    1、节点选择器
+        print(soup.title)           #输出标题
+        print(soup.title.string)    #输出标题内容
+        print(soup.p.attrs['name']) #输出某个节点的内容
+        
+        缺点：只能获取到第一个匹配的节点，后面的都会忽略掉
+
+        获取属性
+            print(soup.p.attrs)             # 返回字典格式
+            print(soup.p.attrs['class'])    # p标签的class属性值  
+            print(soup.p.['class'])         # p标签的class属性值，与上面的写法效果一样
+
+        获取内容
+            print(soup.a.string)
+            print(soup.p.string)        # p标签里面还有子标签，子标签也有数据时，用string会迷路，找不到文本，返回None
+            print(soup.p.get_text())    # get_text()功能更强大些，能提取到p节点及其子节点的文本
+
+
+        关联选择
+            a 子节点，子孙节点
+                print(soup.p.contents)          #返回p的所有子节点列表
+                print(list(soup.p.children))    #同上，返回p的所有子节点列表，soup.p.children返回的是一个list_iterator 列表生成器
+
+                print(list(soup.p.descendants)) #获取子孙节点，soup.p.descendants返回生成器
+           
+            b 父节点，祖先节点
+                print(soup.a.parent)        # 获取父节点，只有一个元素
+                print(list(soup.a.parents)) # 获取祖先节点，soup.a.parents返回一个生成器
+
+            c 兄弟节点
+                print(soup.a.previous_sibling)  # 获取最近的哥哥，前一个元素
+                print(soup.a.next_sibling)      # 获取最近的弟弟，后一个元素
+                print(list(soup.a.previous_siblings)) # 获取所有的哥哥，前面的所有兄弟元素，soup.a.previous_siblings返回生成器
+                print(list(soup.a.next_siblings))     # 获取所有的弟弟，后面的所有兄弟节点，soup.a.next_siblings返回生成器
+
+
+
+    2、方法选择器
+        1) find_all()
+            find_all() 方法搜索当前tag的所有tag子节点,并判断是否符合过滤器的条件
+            
+            find_all(name, attrs, recursive, string, **kwargs )
+                attrs接收字典
+                
+            返回列表
+            
+            eg:
+                res1 = soup.find_all(name='ul')
+                res2 = soup.find_all(attrs={'class':'element'})
+                res3 = soup.find_all(class_='element')
+                res4 = soup.find_all(id='list-1')
+                print(res1,res2,res3,res4)
+            
+            text参数
+                soup.find_all(text='Lacie')             #返回匹配的文本
+                soup.find_all(text=re.compile('Hello')) #返回正则能匹配上的文本
+
+        2）find()
+            唯一的区别是 find_all() 方法的返回结果是值包含一个元素的列表,而 find() 方法直接返回结果；find_all() 方法没有找到目标是返回空列表, find() 方法找不到目标时,返回 None 。
+            
+            find( name , attrs , recursive , string , **kwargs )
+
+
+        3）find_all_next()
+            find_all_next()
+                b = soup....
+                b.find_all_next()
+            返回某节点后面，所有符合条件的节点
+            
+            find_next()
+                b = soup....
+                b.find_next()
+            返回某节点后面，第一个符合条件的节点
+
+
+    3、CSS选择器
+        soup = BeautifulSoup(html, 'lxml')
+        text = soup.select('条件')      # 返回一个列表
+
+        eg:
+        text = soup.select('ul.list')       # 表示获取 标签为ul且class=‘list’的对象
+        text = soup.select('ul .list')      # 表示获取 标签为ul下面的元素的class=‘list’的对象，可以跨节点获取所有子孙节点的对象
+        text = soup.select('ul>.list')      # 表示获取 标签为ul下面的子元素的class=‘list’的对象，不能获取孙节点
+        text = soup.select('[name=abc]')    # 表示获取 属性name="abc"的元素
+        text = soup.select('ul>.list')[0].select('a')   # 嵌套选择
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

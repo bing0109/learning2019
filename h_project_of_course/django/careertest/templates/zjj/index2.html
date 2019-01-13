@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Enhance Required Form Fields with CSS3</title>
+<link rel="stylesheet" type="text/css" href="/static/css/zjj/index2/demo.css" />
+
+<!--必要样式-->
+<link rel="stylesheet" type="text/css" href="/static/css/zjj/index2/style2.css" />
+
+</head>
+<body>
+
+	<div class="codrops-demos">
+		<a href="index.html">首页</a>
+		<a class="current-demo" href="index2.html">客户HR</a>
+		<a href="index3.html">登入</a>
+	</div>
+
+	<div class="af-wrapper">
+		<h3>被测试人员表</h3>
+		
+		<input id="af-showreq" class="af-show-input" type="checkbox" name="showreq" />
+		<label for="af-showreq" class="af-show">显示必填项</label>
+		
+		<form class="af-form" id="af-form" novalidate>
+			
+			<div class="af-outer">
+				<div class="af-inner">
+					<label for="input-title">职位名称</label>
+					<input type="text" name="title" id="input-title">
+				</div>
+			</div>
+		
+			<div class="af-outer af-required">
+				<div class="af-inner">
+					<label for="input-name">名称</label>
+					<input type="text" name="fullname" id="input-name" required>
+				</div>
+			</div>
+			
+			<div class="af-outer af-required">
+				<div class="af-inner">
+				  <label for="input-email">邮箱:</label>
+				  <input type="email" name="email_address" id="input-email" required>
+				</div>
+			</div>
+			
+			<div class="af-outer">
+				<div class="af-inner">
+					<label for="input-bdate">出生日期</label>
+					<input type="date" name="birthdate" id="input-bdate" placeholder="MM/DD/YYYY">
+				</div>
+			</div>
+			
+			<div class="af-outer af-required">
+				<div class="af-inner">
+				  <label for="input-country">城市</label>
+				  <input type="email" name="country" id="input-country" required>
+				</div>
+			</div>
+			
+			<div class="af-outer">
+				<div class="af-inner">
+				  <label for="input-catname">你的猫的名字</label>
+				  <input type="email" name="catsname" id="input-catname">
+				</div>
+			</div>
+			
+			<div class="af-outer">
+				<div class="af-inner">
+				  <label for="input-phone">手机</label>
+				  <input type="email" name="phonenumber" id="input-phone">
+				</div>
+			</div>
+			
+			<input type="submit" value="发送!" /> 
+			
+		</form>
+	</div>
+
+</body>
+</html>

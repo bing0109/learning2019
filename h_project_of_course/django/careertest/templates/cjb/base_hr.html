@@ -1,0 +1,66 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="/static/js/cjb/jquery-3.3.1.js"></script>
+    <script type="text/javascript" src="/static/js/cjb/bootstrap.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/cjb/bootstrap.css">
+    <link rel="">
+    <!--<title>职位需求</title>-->
+
+    {% block pg_head %}{% endblock %}
+
+</head>
+
+<body class="col-xs-12" style="min-width: 1210px">
+    <div class="container">
+        <div class="page-header col-xs-12">
+          <h1>职位需求 <small>脑洞大开组</small></h1>
+        </div>
+        <div class="col-xs-3">
+            <ul class="nav nav-pills nav-stacked" id="nav_list_left">
+                <li role="presentation" {% if nav_title == 'company' %}class="active"{% endif %} ><a href="/cjb/company/ " >公司简介</a></li>
+                <li role="presentation" {% if nav_title == 'jobneed' %}class="active"{% endif %} ><a href="/cjb/jobneed/" >职位需求</a></li>
+                <li role="presentation" {% if nav_title == 'tester' %}class="active"{% endif %}><a href="/cjb/tester/" >面试者</a></li>
+                <!--<li role="presentation" {% if nav_title == 'message' %}class="active"{% endif %}><a href="/cjb/jobneed/"  >Messages</a></li>-->
+            </ul>
+        </div>
+
+        <div class="container col-xs-9">
+            {% block pg_body %}{% endblock %}
+            <div class="content_right">
+                <!--<h1>公司简介</h1>-->
+            </div>
+            <div>
+                <nav aria-label="Page navigation">
+                  <ul class="pagination" id="page_list">
+                    <li>
+                      <a href="#" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                      </a>
+                    </li>
+                    <li class="active"><a href="#">1</a></li>
+                    <li><a href="#">2</a></li>
+                    <li><a href="#">3</a></li>
+                    <li><a href="#">4</a></li>
+                    <li><a href="#">5</a></li>
+                    <li>
+                      <a href="#" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                      </a>
+                    </li>
+                  </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+    <div style="height: 50px;"></div>
+
+
+</body>
+
+    {% block pg_script %}{% endblock %}
+
+    <script>
+        // console.log({{ nav_title }},'----nav_title----')
+    </script>
+</html>

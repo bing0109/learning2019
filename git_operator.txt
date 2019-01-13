@@ -1,0 +1,155 @@
+1、本地的项目文件夹下，编写自己的代码文件
+
+2、每天晚上都可以将自己当天的代码提交到本地git
+    1）先提交到本地git
+        git add -A                            //-A表示提交所有的修改
+        git commit -m '本次提交的说明'         //提交操作
+        git status                             //查看本地git提交状态
+            git status要回显‘无文件要提交，干净的工作区’
+    
+
+
+3、阶段性的把本地的代码推送到github上
+    先保证本地的文件都提交了，工作区干净
+    1）执行git pull从远程更新本地diam
+        git pull origin div               \\从github拉取文件更新本地代码
+            执行成功后再执行第2）步
+            执行失败了，可能就是有冲突
+
+    2）执行git push把本地代码推送到远程github上
+        git push origin div
+        没报错（fatal）就表示提交成功
+
+
+4、其他操作
+    1）本地新建项目
+		进入某个目录下
+		初始化
+        git init
+        添加远程仓库
+        git remote add origin git@github.com:zjj0312/careertest.git
+
+    2）克隆项目
+        进入某个目录
+        git clone git@github.com:zjj0312/careertest.git
+        克隆的项目会自动配置github远程仓库
+		
+	3）给git配置用户名和邮箱
+	    git config --global user.name 'zl03'
+        git config --global user.email 'zl03@qq.com'
+
+    4）查看远程仓库
+        git remote -v
+        
+        删除远程仓库：git remote remove origin
+        
+
+5、git添加公钥后报错sign_and_send_pubkey: signing failed: agent refused operation的解决办法
+　　在服务器添加完公钥后报错
+	sign_and_send_pubkey: signing failed: agent refused operation
+　　这个时候我们只要执行下
+	eval "$(ssh-agent -s)"
+	ssh-add
+
+
+
+6、一台电脑，多个项目，分别对应不同的github账号仓库
+	参考https://blog.csdn.net/wangpingfang/article/details/53117087
+    
+    1、为每个项目生成不同的公钥
+        ~/.ssh$ ssh-keygen -t rsa -C "zl03@qq.com"
+        Generating public/private rsa key pair.
+        Enter file in which to save the key (/home/zelin/.ssh/id_rsa): id_rsa_myself    //这里为每个公钥设置不同的名称
+        Enter passphrase (empty for no passphrase): 
+        Enter same passphrase again: 
+        Your identification has been saved in id_rsa_myself.
+        Your public key has been saved in id_rsa_myself.pub.
+        The key fingerprint is:
+        SHA256:LwPZ+rB1EoaRTrPl0SyvuNXBgZOKNb0h4fgwPxjRfDs zl03@qq.com
+
+        ~/.ssh$ ssh-keygen -t rsa -C "zl03@qq.com"
+        Generating public/private rsa key pair.
+        Enter file in which to save the key (/home/zelin/.ssh/id_rsa): id_rsa_work    //这里为每个公钥设置不同的名称
+
+
+    2、默认只会读取id_rsa，为了让SSH识别新的私钥，需将其添加到SSH agent中
+        ssh-add /home/user/.ssh/id_rsa_myself                           //路径最好用绝对路径
+        如果出现Could not open a connection to your authentication agent的错误，就试着用以下命令
+            ssh-agent bash
+            ssh-add /home/user/.ssh/id_rsa_work
+        最后，你可以使用如下命令检查已保存的公钥：
+            ssh-add -l
+
+    3、把公钥分别上传到对应的github账号里面去
+
+    4、在~/.ssh目录下找到config文件，如果没有就创建，内容如下
+        # Work GitHub
+        Host wk.github.com                          //类似于配置别名
+            HostName github.com                     //固定写法，github.com
+            PreferredAuthentications publickey      //固定写法
+            IdentityFile ~/.ssh/id_rsa_work         //这里路径、文件名要对应
+
+        # Personal GitHub
+        Host my.github.com
+            HostName github.com
+            PreferredAuthentications publickey
+            IdentityFile ~/.ssh/id_rsa_myself           //这里路径、文件名要对应
+        测试配置
+        使用如下命令，检查之前的配置是否正确：
+            $ ssh -T git@wk.github.com
+            返回：Hi pwang08! You've successfully authenticated, but GitHub does not provide shell access.
+            $ ssh -T git@my.github.com
+            返回：Hi Turalyonx! You've successfully authenticated, but GitHub does not provide shell access.
+
+
+
+    5、配置git remote
+        对于个人账户下的项目，假设其ssh链接原本为：
+            git@github.com:myaccount/repository.git
+            需要将其修改为：
+            git@my.github.com:myaccount/repository.git          //my.github.com为之前config里面配置的Host
+
+            修改方法
+            git remote remove origin
+            git remote add origin git@my.github.com:myaccount/repository.git
+
+
+        其他项目的操作类似
+
+
+
+
+
+
+git init
+git config --global user.name 'dc03'
+git config --global user.email 'dc03@163.com'
+ssh-keygen -t rsa -C "zl03@qq.com"
+
+git remote add origin 'git@github.com:bing0109/HTML5.git'
+git remote add origin 'git@github.com:bing0109/careertest.git'
+
+
+ssh -T git@github.com
+
+git remote -v
+
+
+git remote remove origin
+
+git remote rm origin
+git config --global uesr.name 'testuser'
+git config --global user.mail 'testmail@qq.com'
+
+
+
+
+https://www.cnblogs.com/ailhc/p/6586465.html
+git添加公钥后报错sign_and_send_pubkey: signing failed: agent refused operation的解决办法
+　　在服务器添加完公钥后报错
+	sign_and_send_pubkey: signing failed: agent refused operation
+　　这个时候我们只要执行下
+	eval "$(ssh-agent -s)"
+	ssh-add
+
+
