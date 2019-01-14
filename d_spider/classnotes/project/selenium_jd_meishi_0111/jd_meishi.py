@@ -205,7 +205,7 @@ def main():
     print(total_page, '--totol page--')
 
     # total_page = 2
-    for i in range(1, int(total_page)):
+    for i in range(54, int(total_page)):
         next_page(i, browser, wait)
         time.sleep(random.randint(1, 5))
 
