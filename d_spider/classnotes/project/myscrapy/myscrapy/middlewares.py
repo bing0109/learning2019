@@ -6,6 +6,15 @@
 # https://doc.scrapy.org/en/latest/topics/spider-middleware.html
 
 from scrapy import signals
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
+import logging
+from scrapy.http import HtmlResponse, Response
+import time
 
 
 class MyscrapySpiderMiddleware(object):
@@ -101,3 +110,79 @@ class MyscrapyDownloaderMiddleware(object):
 
     def spider_opened(self, spider):
         spider.logger.info('Spider opened: %s' % spider.name)
+
+
+class HttpbinDownloaderMiddleware(object):
+    def process_request(self, request, spider):
+        """
+        了解process_request的用法，利用downloader中间件设置代理
+        :param request:
+        :param spider:
+        :return:
+        """
+        print('start proxy  -----------')
+        request.meta['proxy'] = 'http://119.101.116.36:9999'
+        return None
+
+    def process_response(self, request, response, spider):
+        """
+        了解process_response的用法，利用downloader中间件改变 返回后的状态码
+        :param request:
+        :param response:
+        :param spider:
+        :return:
+        """
+        if response.status == 200:
+            response.status = 201       # 设置成401后，scrapy后面的不会再处理
+
+        return response
+
+    def process_exception(self, request, exception, response):
+        return None
+
+
+class SeleniumDownloaderMiddleware(object):
+    def __init__(self):
+        self.options = Options()
+        self.options.add_argument('--headless')
+        self.options.add_argument('--no-sandbox')
+        self.browser = webdriver.Chrome(chrome_options=self.options)
+        self.wait = WebDriverWait(self.browser, 30)
+        self.logger = logging.getLogger(__name__)
+
+    def __del__(self, instance):
+        self.browser.close()
+
+    def process_request(self, request, spider):
+        self.logger.info('----------')
+        self.browser.get(request.url)
+        time.sleep(1)
+        # 获取准备跳转的页面
+        pg = request.meta['page']
+        if int(pg) > 1:
+            self.browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+            self.wait.until(EC.presence_of_element_located(
+                (By.CSS_SELECTOR, '#J_goodsList > ul > li:nth-of-type(60)')))  # 等待每页最后一条记录显示出来，最后一页可能得另外处理一下
+
+            pg_input = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#J_bottomPage > span.p-skip > input')))    # 获取页面输入框
+            pg_btn = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#J_bottomPage > span.p-skip > a')))          # 获取确定跳转按钮
+            pg_input.clear()
+            pg_input.send_keys(str(int(pg)+1))
+            pg_btn.click()
+
+        time.sleep(3)
+        self.browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#J_goodsList > ul > li:nth-of-type(60)')))  # 等待每页最后一条记录显示出来，最后一页可能得另外处理一下
+        # self.wait.until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#J_bottomPage > span.p-num > a.curr'), str(pg)))   # 等待底下翻页栏，当前页面数显示位跳转后的页面
+        # self.browser.find_element_by_css_selector('#J_bottomPage > span.p-skip > em:nth-of-type(1) > b'))text  # 总页数
+        # pg = self.browser.find_element_by_css_selector('#J_bottomPage > span.p-num > a.curr').text  # 获取当前页数
+
+        res = self.browser.page_source
+
+        # print(res, '-------res-----process-request---------')
+        # 直接返回Response会报错编码错误，body必须是byte类型
+        # return Response(url=request.url, request=request, status=200, body=res)
+        # 把url带上是传给spider时，让其知晓响应是哪个request发出的
+        return HtmlResponse(url=request.url, request=request, status=200, encoding='utf-8', body=res)
+
+

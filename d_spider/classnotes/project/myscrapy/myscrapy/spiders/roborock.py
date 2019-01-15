@@ -28,10 +28,10 @@ class RoborockSpider(scrapy.Spider):
         #     yield scrapy.Request(url=url, callback=self.parse)
 
         i = 0
-        while i < 6:
+        while i < 100:
             start_urls = 'https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv3927&productId=8249826&score=0&sortType=5&page=' + str(i) + '&pageSize=10&isShadowSku=0&rid=0&fold=1'
             yield scrapy.Request(url=start_urls, callback=self.parse)
-            time.sleep(random.randint(1, 4))
+            time.sleep(random.randint(1, 2))
             i += 1
 
     # 'https://sclub.jd.com/comment/productPageComments.action?callback=fetchJSON_comment98vv3927&productId=8249826&score=0&sortType=5&page=0&pageSize=10&isShadowSku=0&rid=0&fold=1'

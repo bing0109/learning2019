@@ -24,3 +24,13 @@ class RoborockItem(scrapy.Item):
     comm_time = scrapy.Field()
     comm_nice_num = scrapy.Field()
     comm_reply_num = scrapy.Field()
+
+
+class Jd_nianhuoItem(scrapy.Item):
+    img_url = scrapy.Field()
+    price = scrapy.Field()
+    title = scrapy.Field()
+    comment_num = scrapy.Field()
+    shop_name = scrapy.Field()
+    tags = scrapy.Field()
+    img_path = scrapy.Field()

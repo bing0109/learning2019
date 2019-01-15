@@ -19,7 +19,7 @@ NEWSPIDER_MODULE = 'myscrapy.spiders'
 #USER_AGENT = 'myscrapy (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -39,10 +39,11 @@ ROBOTSTXT_OBEY = True
 #TELNETCONSOLE_ENABLED = False
 
 # Override the default request headers:
-#DEFAULT_REQUEST_HEADERS = {
-#   'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-#   'Accept-Language': 'en',
-#}
+# DEFAULT_REQUEST_HEADERS = {
+#     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+#     'Accept-Language': 'en',
+#     'abc': '---------abc-----------',
+# }
 
 # Enable or disable spider middlewares
 # See https://doc.scrapy.org/en/latest/topics/spider-middleware.html
@@ -94,3 +95,7 @@ ROBOTSTXT_OBEY = True
 # settings里面定义的变量名要用大写
 MONGO_URL = 'localhost'
 MONGO_DB = 'pachong'
+
+# jd_nianhuo传参
+MAX_PAGE = 2
+KEY_WORD = '年货'

@@ -71,7 +71,7 @@ def save_img(url, path):
 
 
 def get_good_list(html, pg):
-    soup = BeautifulSoup(html, 'lxml')
+    soup = BeautifulSoup(html, 'html.parser')
     goods_list = soup.select('#J_goodsList > ul > li')
     print(len(goods_list), pg, '----num per page---')
     return goods_list
