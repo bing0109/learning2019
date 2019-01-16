@@ -158,7 +158,7 @@ class SeleniumDownloaderMiddleware(object):
         self.browser.get(request.url)
         time.sleep(1)
         # 获取准备跳转的页面
-        pg = request.meta['page']
+        pg = request.meta['pg']
         if int(pg) > 1:
             self.browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
             self.wait.until(EC.presence_of_element_located(
