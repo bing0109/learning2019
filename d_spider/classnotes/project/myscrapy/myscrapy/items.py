@@ -27,6 +27,7 @@ class RoborockItem(scrapy.Item):
 
 
 class Jd_nianhuoItem(scrapy.Item):
+    id = scrapy.Field()
     img_url = scrapy.Field()
     price = scrapy.Field()
     title = scrapy.Field()

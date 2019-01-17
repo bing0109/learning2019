@@ -6,7 +6,14 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 from scrapy.exceptions import DropItem
 import pymongo
+import logging
 
+logging.basicConfig(
+    level=logging.INFO,
+    filename='/home/zelin/data/jd_nianhuo/jdnianhuo.log',
+    filemode='a',
+    format='%(asctime)s - %(levelname)s - line:%(lineno)d: %(message)s',
+)
 
 class QuoteItemPipeline(object):
     """
@@ -48,6 +55,7 @@ class MongoPipeline(object):
         """
         self.client = pymongo.MongoClient(self.mongo_url)
         self.db = self.client[self.mongo_db]
+        logging.info('open mongo')
 
     def close_spider(self, spider):
         """
@@ -56,11 +64,14 @@ class MongoPipeline(object):
         :return:
         """
         self.client.close()
+        logging.info('close mongo')
 
     def process_item(self, item, spider):
         name = item.__class__.__name__      # 获取item对应的类的名字
-        print(name)
+        # print(name)
         self.db[name].insert_one(dict(item))
+        logging.info('save data to mongo success' + name + str(dict(item)))
+
 
 
 class RoborockyItemPipeline(object):

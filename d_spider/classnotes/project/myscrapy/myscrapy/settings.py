@@ -97,5 +97,5 @@ MONGO_URL = 'localhost'
 MONGO_DB = 'pachong'
 
 # jd_nianhuo传参
-MAX_PAGE = 3
+MAX_PAGE = 10
 KEY_WORD = '年货'

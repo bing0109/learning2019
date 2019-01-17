@@ -1,0 +1,93 @@
+1、scrapy基本原理
+模块
+    engine 引擎        scrapy的核心部分，用来控制数据流的走向
+    scheduler 调度器   调度请求，维护请求队列，由请求需求的时候，会从请求队列里面取出请求，放在下载器里面去，传给引擎
+        dont_filter=True表示会对重复的请求进行调度
+    spiders            实现爬取逻辑，提取信息
+    downloader         主要负责跟互联网进行交互，实现http的过程
+    ItemPipeline       主要用来处理和保存数据
+    Middleware         scrapy的一些功能扩展，eg添加代理、cookies，跟selenium对接，错误重试等
+        
+        
+        
+scrapy的选择器
+    res=某个请求获得的响应
+    res.css('#id .class element') 定位到节点
+    res.css('#id .class element::text') 定位到文本信息
+    res.css('#id .class element::attr('name')') 定位到某个属性
+    res.css('element[class*="img"]') 定位只需要class包含img字符串的元素
+    res.css('#id .class element::text').extract() 返回所有符合条件的文本信息，返回的是列表
+    res.css('#id .class element::text').extract_first() 返回第一个符合条件的文本信息
+
+    res.xpath('//div[@class="img"]/a')  定位到某个节点
+    res.xpath('//div[@class="img"]/a/text()')  定位到某个节点的文本
+    res.xpath('//div[@class="img"]/a/@href')  定位到某个节点的属性
+    res.xpath('//div[contains(@class,"img")]')  定位到class包含img字符串的div元素
+    res.xpath('//div[@class="img"]/a/text()').re(r'')  定位到某个节点的文本,并配合正则表达式提取文本信息
+    res.xpath('//div[@class="img"]/a/text()').re_first(r'')  定位到某个节点的文本,并配合正则表达式提取满足要求的第一个文本信息
+
+
+命令行工具
+    <>表可编辑  []表可选项
+    scrapy startproject <projectname>   创建项目
+    scrapy genspider <spidername> <example.com> 在所依赖的项目目录下，创建spider
+    scrapy crawl <spidername> [-o <filename.json/jl/csv>]   执行某个spider，可以选择把爬取的信息保存到某个文件里面
+    scrapy view <url>   可以查看url有哪些信息在主框架里面，有哪些信息是通过js渲染的
+    scrapy shell <url>  用来模拟访问url，命令行进行调试
+    scrapy settings --get <Name>  用来查看settings里面的某个设置，可以查看项目里面的，也可查看系统默认的设置
+    scrap check [-l] <spider>   用来查看语法错误
+    
+    
+Item Pipeline
+    def process_item(self, item, spider)    核心函数，主要用来处理和保存item，只能返回item或DropItem
+    def from_crawler(cls, crawler)  主要用来从各个组件获取信息，常用来从settings里获取变量配合初始化
+    def open_spider(self, spider)   在打开spider的时候执行该函数
+    def close_spider(self, spider)  在关闭spider的时候执行的函数
+    
+    
+spider
+    属性
+        name    spider的名字，用来区分不同的spider，在整个项目里面要保证独一无二
+        allow_domain    后续请求允许的url范围，可选项
+        start_urls      初始请求的链接，如果使用默认的start_request，就会调用start_urls，否则不会调用
+        custom_settings 局部变量，注意用来覆盖settings里面的某些全局变量设置
+        settings    通过scrapy.settings.get('name')来获取settings里面的某些变量的设置
+        logger      打印信息，会说明当前的日志信息来自于哪个文件，scrapy.logger
+        
+    方法
+        def start_request(self) 重新定义初始请求
+        def close(self, reason) 在关闭spider时，执行的函数
+        
+
+Download Middleware
+    def process_request(self, request, spider)
+        return None         不改变原来的执行流程，主要用来添加代理，cookies等
+        return request      改变原来的执行流程，将当前的request打回scheduler重新调度
+        return Response     改变原来的执行流程，根据当前的请求通过其他途径（非downloader）获取响应，然后返回，例如跟selenium对接
+
+    def process_response(self, response, request, spider)
+        # 处理响应
+        return Request      将当前的响应放弃，把返回的request给调度器重新调度，例如检查Response是否满足要求
+        return Response     不改变原来的执行流程，例如处理文件解压等
+
+    def process_exception(self, exception, request, spider)
+        # 处理异常
+        return None         对exception处理一次，如果没解决，就抛出异常
+        return request      对exception处理，返回一个request进行重新调度，例如错误重试
+        return Response     对Exception处理，返回一个Response经过process_response处理，再返回给spider
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -12,9 +12,17 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import StaleElementReferenceException, TimeoutException
-import logging
 from scrapy.http import HtmlResponse, Response
 import time
+import requests
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    filename='/home/zelin/data/jd_nianhuo/jdnianhuo.log',
+    filemode='a',
+    format='%(asctime)s - %(levelname)s - line:%(lineno)d: %(message)s',
+)
 
 
 class MyscrapySpiderMiddleware(object):
@@ -152,37 +160,59 @@ class SeleniumDownloaderMiddleware(object):
 
     def __del__(self, instance):
         self.browser.close()
+        logging.info('close browser')
 
     def process_request(self, request, spider):
-        self.logger.info('----------')
-        self.browser.get(request.url)
-        time.sleep(1)
-        # 获取准备跳转的页面
-        pg = request.meta['pg']
-        if int(pg) > 1:
+        # print(request.meta,'---request-meta-------------------')
+        if 'type' in request.meta:  #'type' in request.meta.keys()
+            # 爬取图片
+            print(request.url,'-----img-request-url-----')
+            res = requests.get(request.url).content
+            logging.info('get img response,pgid:'+str(request.meta['pg']))
+            return Response(url=request.url, request=request, status=200, body=res)
+
+        else:
+            # 搜索和翻页，并返回结果
+            # self.logger.info('----------')
+            self.browser.get(request.url)
+            time.sleep(1)
+            # 获取准备跳转的页面
+            pg = request.meta['pg']
+            if int(pg) > 1:
+                self.browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
+                self.wait.until(EC.presence_of_element_located(
+                    (By.CSS_SELECTOR, '#J_goodsList > ul > li:nth-of-type(60)')))  # 等待每页最后一条记录显示出来，最后一页可能得另外处理一下
+
+                pg_input = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#J_bottomPage > span.p-skip > input')))    # 获取页面输入框
+                pg_btn = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#J_bottomPage > span.p-skip > a')))          # 获取确定跳转按钮
+                pg_input.clear()
+                pg_input.send_keys(str(int(pg)+1))
+                pg_btn.click()
+
+            time.sleep(3)
             self.browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
-            self.wait.until(EC.presence_of_element_located(
-                (By.CSS_SELECTOR, '#J_goodsList > ul > li:nth-of-type(60)')))  # 等待每页最后一条记录显示出来，最后一页可能得另外处理一下
+            self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#J_goodsList > ul > li:nth-of-type(60)')))  # 等待每页最后一条记录显示出来，最后一页可能得另外处理一下
+            # self.wait.until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#J_bottomPage > span.p-num > a.curr'), str(pg)))   # 等待底下翻页栏，当前页面数显示位跳转后的页面
+            # self.browser.find_element_by_css_selector('#J_bottomPage > span.p-skip > em:nth-of-type(1) > b'))text  # 总页数
+            # pg = self.browser.find_element_by_css_selector('#J_bottomPage > span.p-num > a.curr').text  # 获取当前页数
 
-            pg_input = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#J_bottomPage > span.p-skip > input')))    # 获取页面输入框
-            pg_btn = self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#J_bottomPage > span.p-skip > a')))          # 获取确定跳转按钮
-            pg_input.clear()
-            pg_input.send_keys(str(int(pg)+1))
-            pg_btn.click()
+            res = self.browser.page_source
 
-        time.sleep(3)
-        self.browser.execute_script('window.scrollTo(0, document.body.scrollHeight)')
-        self.wait.until(EC.presence_of_element_located((By.CSS_SELECTOR, '#J_goodsList > ul > li:nth-of-type(60)')))  # 等待每页最后一条记录显示出来，最后一页可能得另外处理一下
-        # self.wait.until(EC.text_to_be_present_in_element((By.CSS_SELECTOR, '#J_bottomPage > span.p-num > a.curr'), str(pg)))   # 等待底下翻页栏，当前页面数显示位跳转后的页面
-        # self.browser.find_element_by_css_selector('#J_bottomPage > span.p-skip > em:nth-of-type(1) > b'))text  # 总页数
-        # pg = self.browser.find_element_by_css_selector('#J_bottomPage > span.p-num > a.curr').text  # 获取当前页数
+            # print(res, '-------res-----process-request---------')
+            # 直接返回Response会报错编码错误，body必须是byte类型
+            # return Response(url=request.url, request=request, status=200, body=res)
+            # 把url带上是传给spider时，让其知晓响应是哪个request发出的
+            logging.info('get search and go to the specified page, pgid:' + str(int(pg)+1))
+            return HtmlResponse(url=request.url, request=request, status=200, encoding='utf-8', body=res)
 
-        res = self.browser.page_source
-
-        # print(res, '-------res-----process-request---------')
-        # 直接返回Response会报错编码错误，body必须是byte类型
-        # return Response(url=request.url, request=request, status=200, body=res)
-        # 把url带上是传给spider时，让其知晓响应是哪个request发出的
-        return HtmlResponse(url=request.url, request=request, status=200, encoding='utf-8', body=res)
+    def process_exception(self, request, exception, spider):
+        # print('出现错误,jdnianhuo')
+        logging.error('error occur \n'+ str(exception))
+        self.browser.close()
 
 
+class GoogleDownloaderMiddleware(object):
+    def process_exception(self, request, exception, spider):
+        print('出现错误,google')
+        # return None
+        return request
