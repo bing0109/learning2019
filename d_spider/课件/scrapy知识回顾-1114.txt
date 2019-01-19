@@ -1,0 +1,68 @@
+1.scrapy的基本原理
+engine(引擎)：scrapy的核心部分，用来控制数据流的走向
+scheduler(调度器)：调度请求，维护了一个请求队列，有请求需求的时候，从请求队列里面去除请求，传给引擎
+             （dont_filter=True,会对重复的请求进行调度）
+spiders:实现爬取逻辑、提取信息。
+downloader(下载器)：主要负责跟互联网进行交互，主要实现http的过程
+Item Pipeline:主要用来处理数据和保存数据
+Middleware:scrapy的一些功能扩展（例如：添加代理/cookie,跟selenium对接，错误重试等）
+
+2. scrapy的选择器
+#response指某个请求的获得的响应
+response.css('#id .class element')#定位到某个节点
+response.css('#id .class element::text')#定位到某个文本
+response.css('#id .class element::attr("name")')#定位到某个属性
+response.css('element[class*="imge"]')#定位只需要class包含“image”字符串
+response.css('#id .class element::text').extract()#返回所有满足要求的文本，返回的是列表
+response.css('#id .class element::text').extract_first()#返回第一个满足要求的文本
+
+response.xpath('//div[@class="image"]/a')#定位某个节点
+response.xpath('//div[@class="image"]/a/text()')#定位到文本
+response.xpath('//div[@class="image"]/a/@href')#定位到属性
+response.xpath('//div[contains(@class,"imge")]')#定位只需要class包含“image”字符串
+
+response.xpath('//div[@class="image"]/a/text()').re(r'')#可以配合正则表达式提取文本信息
+response.xpath('//div[@class="image"]/a/text()').re_first(r'')#配合正则表达式,返回满足要求的第一个
+
+3.命令行工具
+scrapy startproject <projectname>#创建项目
+scrapy genspider <spidername> <example.com>#依赖项目，创建spider
+scrapy crawl <spidername> [-o <filename.jl>]#执行spider，可以选择将爬取的信息保存到文件
+scrapy view <url>#可以查看url有哪些信息在主框架里面，有哪些信息是通过js渲染的
+scrapy shell <url>#用来模拟访问url
+scrapy settings --get NAME#用来查看settings里面的设置，可以查看项目的配置，也可以查看系统默认的配置
+scrapy check [-l] <spidername>#查看语法错误
+
+4.Item Pipeline
+def process_item(self,item,spider)#核心函数，主要来处理Item和保存Item,只能返回item或DropItem
+def from_crawler(cls,crawler)#用来从各个组件获取信息，常用来从settings获取变量配合初始化
+def open_spider(self,spider)#在打开spider的时候执行该函数
+def close_spider(self,spider)#在关闭spider的时候执行该函数
+
+5.Spiders
+#属性
+name#spider的名字，用来区分不同的spider，在整个项目里面保证独一无二
+allow_domain#后续请求允许的url范围，可选项
+start_urls#初始请求的url，如果使用默认start_request，会调用start_urls
+custom_settings#局部变量，主要用覆盖settings里面的某些全局变量
+settings:通过get()来获取settings某些变量:settings.get('NAME')
+logger:打印信息，会说明输出的信息来自于哪个文件，以及给信息是info还是debug
+#方法
+def start_request(self)#重新定义初始请求
+def close(self,reason)#在关闭spider时，执行该函数
+
+6 Downloader Middleware
+def process_request(self,request,spider)#处理请求
+return None#不改变原来执行流程，主要可以来添加代理、cookie
+return request#将当前的request打回scheduler重新调度
+return resposne#根据的请求，通过其他途径，获取response，例如跟selenium对接
+
+def process_response(self,response,request,spider)#处理响应
+return request#将当前响应放弃，将对应request打回scheduler重新调度，例如：检查response
+retuen resposne#不改变原来执行流程，例如：文件解压
+
+def process_exception(self,exception,request,spider)#处理异常
+return None#对exception处理一次，如果没有解决，就会抛出异常
+return request#针对出现的请求过程,生成request，重新进行调度，例如错误重试
+return reponse#生成Response，经过process_response的函数的处理，最后返回到spider
+

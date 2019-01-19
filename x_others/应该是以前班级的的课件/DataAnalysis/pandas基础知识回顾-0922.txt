@@ -1,0 +1,150 @@
+1.pandas数据结构对象的构建
+1.1 DataFrame对象的构建
+import pandas as pd
+1.1.1 通过读取文件构建
+#读取csv文件
+data=pd.read_csv('path/filename.csv',sep,index_col,header,parse_dates=[],dtype={},na_values=[],encoding)
+#sep：分隔符，跟文件相关
+#index_col：指明某一列作为行索引名，输入索引名
+#header：指明哪一行作为列索引，可以输入索引号
+#parse_dates：看数据集里面是否有时间那一列，如果有，指明对应的列为时间格式
+#dtype：指明某些列为特定数据类型，接受字典格式
+#na_values：指明某些元素为缺失值
+#encoding：编码问题，常用编码：‘utf-8’;中文：'gb2312','gbk','gb18030';拉丁：'latin1'
+1.1.2 通过字典或者array-like构建
+[{'id':01,'age':13},{'id':02,'age':15}]
+pd.DataFrame(dict,index=[....])#字典里面的key，就直接变成列索引名
+pd.DataFrame(array-like,index=[...],columns=[...])#通过数组或者类似数组列表构建
+1.2 Series对象的构建
+pd.Series(dict)#字典里面的key，就直接变成索引名
+pd.Series(list-like,index=[...])#通过一维的数组或者列表构建
+
+2.查看基本信息
+data.index#查看DataFrame的行索引
+data.columns#查看DataFrame的列索引
+data.values#查看值，返回的是np.array
+data.shape#查看形状
+data.info()#查看相关信息：每列数量、每列的数据类型、消耗的内存等
+data.size#查看所有元素数量
+data.dtypes#查看每列数据类型
+data.head()#查看前5行
+data.tail()#查看后5行
+
+3.索引
+#针对列
+data['col']#针对单列取数，返回的是一个Series对象
+data[['col1','col2']]#针对多列，返回的是一个DataFrame对象
+#iloc/loc
+data.iloc[[index_num1,index_num2],:col_num3]#针对索引号取数，可以花式或者切片
+data.loc[[index1,index2],:col3]#根据索引名来取数，可以花式或者切片
+#布尔型索引
+data[is_bool]#针对行，is_bool是与data行长度是一样的，是一个一维的bool型list-like(list/array/Series)
+data.loc[is_bool,[col1,col3]]#可以跟loc/iloc配合取数
+
+4 其他（isna()/notna()/unique()/value_counts()/isin()）
+4.1 isna()和notna()
+data.isna()#判断是否有缺失，如果缺失，返回True
+data[col1].isna()#判断某列是否有缺失
+
+data.notna()#判断是否有缺失，如果缺失，返回False
+4.2 isin()
+data.isin(array-like)#判断data里面的元素是否在array-like里面，如果在，返回True
+4.3 unique()
+data[col].unique()#只能针对Series对象，返回该对象里面独一无二的值
+4.4 value_counts()
+data[col].value_counts()#只能针对Series对象，统计该对象里面元素出现的频数，并且按频数降序返回
+
+5 可视化
+5.1 matplotlib.pyplot
+import matplotlib.pyplot as plt
+plt.plot(x,y，color,linestyle)#线状图
+#x:是一个一维array-like(list/Series/array),x轴的数据
+#y:是一个一维array-like(list/Series/array),y轴的数据
+#color:线显示的颜色,'r'：红,'g'：绿，'b':蓝色
+#linestyle：线型，'-'：实线，'--':虚线，‘-.’:点虚，':':点线
+plt.hist(x,bins，density=False)#直方图
+#x:一个连续型序列；#bins:画直方图需要的条形数量
+#density:为FALSE（默认）：统计频数；True:统计频率
+plt.bar(x,y,color,alpha)#柱状图
+#x：柱状的数量，一个list-like
+#y:每个柱状的高度
+#alpha：透明度
+plt.scatter(x,y,marker)#散点图
+#marker:标志，'s':正方形，'o':圆形，'^':上三角，'v':下三角，'*':五角星
+plt.pie(list-like,lables,autopct)#饼状图
+#list-like：数据的概率分布*100
+#labels:标签，指的是每个饼状的标签
+#autopct：数字标签，例：'%.2f%%'
+
+#调整
+plt.xticks(x,xticks=[],rotation,fontsize)#x轴刻度#rotation:旋转角度，fontsize指的是刻度字体大小
+plt.yticks(x,xticks=[],rotation,fontsize)#y轴刻度
+plt.xlabel('标签名',fontsize)#x轴的标签
+plt.ylabel('标签名',fontsize)#y轴的标签
+plt.xlim(min,max)#x轴的显示范围[min,max]
+plt.ylim(min,max)#y轴的显示范围[min,max]
+plt.title('图片标题',fontsize)#标题
+plt.text(a,b,'插入的文本',fontsize)#在(a,b)点插入文本
+plt.grid()#显示网格
+plt.show()#显示
+plt.savefig('path/img.png',dpi=300,bbox_inches='tight')#保存图片
+#bbox_inches：可选，保存时可将图片周边的留白去掉
+
+#子图
+fig=figure(figsize=(10,8))#声明图片对象，figsize指的是图片显示大小
+ax=fig.subplots((2,3))#声明子图的排布，后面画对应图时在对应的ax位置
+
+5.2 pandas的可视化
+pandas的可视化是在matplotlib基础库上进行封装的，所以matplotlib.pylot的相关用法也可以使用
+data.plot(kind='line',ax,figsize,xlim,ylim,grid,stacked,**params)
+#kind:指的是绘制的图形：'line'：线状图、'bar':垂直柱状图，‘barh’：水平柱状图,'hist':直方图、'kde'：核密度图、‘pie’:饼状图等
+#ax：如果需要绘制子图，需要指明对应的子图
+#figsize：图片大小
+#xlim,ylim：坐标显示区域
+#grid：True指的是显示网格
+#stacked：绘制柱状图时是否考虑堆叠
+#**params：指的是matplotlib.pylot里面的相关参数，例如：color/alpha
+
+6.缺失值的处理
+6.1 dropna()#丢弃缺失值
+data.dropna(axis=0,how='all',inplace=True)#axis:为0时丢弃是包含缺失值的整行；how='all'时，全为缺失值才丢弃，inplace=True时可以对原始数进行替换
+6.2 fillna()#填充缺失值
+data.fillna(value={'col':value1,'col2':value2},method=bfill,limit=2,inplace=True)#填充缺失值
+#values:可以接受单个值、字典；单个值：将所有缺失值的位置用该值填充；字典：对应列(key)填充对应的value
+#method：bfill/backfill指的是后向填充；ffill/pad指的是前向填充
+#limit:限制连续填充的数量
+6.3 replace()#替换
+df.replace(to_replace ,value)
+#to_replace:被替换的对象，可以用字符串也可以用正则等；
+#value:替换的对象
+
+7. 字符串的处理
+pandas提供的关于字符串的处理对象只能是Series
+df['col'].str.lower()#小写
+df['col'].str.upper()#大写
+df['col'].str.title()#首字母大写
+df['col'].str.strip()#去除两边空格(/r/t/n)
+df['col'].str.split('-').str.join('/')#str.split用于将series对象的每个元素字符串拆分成列表；str.join是将列表进行组合
+df['col'].str.contains('av')#判断series每个元素是否包含某段字符串
+df['col'].str.startswith()#判断以什么开头
+df['col'].str.slice(0,5)#切取每个元素字符串的前5个字母
+
+8.去重和重命名索引
+8.1 去重
+df.duplicated()#判断是否重复
+df.drop_duplicates()#去重
+8.2 重命名索引
+df.rename(index,columns)
+#index:可以接受字典，主要用于替换；也可以接受函数方法，用于对index每个元素进行相应的处理
+#columns:同上
+
+9.离散化
+pd.cut(value,bins,right,labels)
+#value:接受的是一个list/series/array(一维)，被离散化的对象
+#bins:可以接受整数，这样等距离散化；也可以接受一个list-like,可以指定距离（区域）进行离散化
+#right：离散的区域闭合方向
+#labels：可选项，可以将离散化后的区域指定为对应的类别
+
+pd.qcut(value,q,right,labels)
+#q:可以接受整数，这样等频离散化；也可以接受一个list-like,可以指定分位数进行离散化
+
