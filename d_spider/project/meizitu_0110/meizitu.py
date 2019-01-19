@@ -8,7 +8,7 @@ import pymongo
 import random
 import logging
 import copy
-
+from fake_useragent import UserAgent
 
 # 日志配置
 logging.basicConfig(
@@ -27,6 +27,12 @@ collection = db.meizitu
 
 base_data_dir = '/home/zelin/data/meizitu/img/'
 
+proxy_pool = [
+    'http://119.101.114.236:9999',
+    'http://27.29.46.70:9999',
+    'http://114.106.150.44:9999',
+    'http://123.163.115.51:9999',
+]
 
 def save_mongo(detail, img_path):
     if collection.delete_many({'url_img': str(detail['url_img'])}).deleted_count > 0:
@@ -47,7 +53,9 @@ def save_img(img_url, pre_url):
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
     }
 
-    res = requests.get(img_url, headers=headers, allow_redirects=False)
+    proxies = proxy_pool[random.randint[0,len(proxy_pool)+1]]
+
+    res = requests.get(img_url, headers=headers, proxies=proxies, verify=False ,allow_redirects=False)
     temp_name = img_url.split('/')
     # 根据url形成图片路径和名称
     img_path = base_data_dir + str(temp_name[3]) + '/' + str(temp_name[4])
@@ -102,10 +110,13 @@ def get_img_url_next_all(url, page_num, pre_url_2pg, pre_url_temp_after2pg):
     else:
         referer_url = pre_url_temp_after2pg
 
+    ua = UserAgent()
+
     headers = {
         'referer': referer_url,
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.99 Safari/537.36'
+        'user-agent': ua.random,
     }
+    print(headers,'-----headers-----')
     # print(url, referer_url, '--url--refer--')
     res = requests.get(url, headers=headers, allow_redirects=False).text
     soup = BeautifulSoup(res, 'lxml')

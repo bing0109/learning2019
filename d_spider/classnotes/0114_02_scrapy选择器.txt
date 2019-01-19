@@ -6,33 +6,34 @@
     Selector 也有一个 .re() 方法，用来通过正则表达式来提取数据。然而，不同于使用 .xpath() 或者 .css() 方法, .re() 方法返回unicode字符串的列表。所以你无法构造嵌套式的 .re() 调用。
 
 
-res = Selector(text=html)
-res.xpath('//title')                        # 定位到title标签  //表示从任意位置开始
-res.xpath('//tite/text()')                  # 获取title的text属性
-res.xpath('//tite/text()').extract_first()  # 抛出title的text属性的第一个值
+        res = Selector(text=html)
+        res.xpath('//title')                        # 定位到title标签  //表示从任意位置开始
+        res.xpath('//tite/text()')                  # 获取title的text属性
+        res.xpath('//tite/text()').extract_first()  # 抛出title的text属性的第一个值
 
 
-res.xpath('//div[@id="images"]/a')          # 找id为image的div下的a节点
-res.xpath('//div[@id="images"]/a/@href')    # 获取其href属性
-res.xpath('//div[@id="images"]/a/@href').extrct()   # 抛出href属性
+        res.xpath('//div[@id="images"]/a')          # 找id为image的div下的a节点
+        res.xpath('//div[@id="images"]/a/@href')    # 获取其href属性
+        res.xpath('//div[@id="images"]/a/@href').extrct()   # 抛出href属性
 
 
-div下,属性href包含'image'的a节点的文本内容
-res.css('div a[href*="image"]::text').extract()
-res.xpath('//div/a[contains(@href,"image")]/text()').extract()
+    div下,属性href包含'image'的a节点的文本内容
+        res.css('div a[href*="image"]::text').extract()
+        res.xpath('//div/a[contains(@href,"image")]/text()').extract()
 
-/表示子节点
-//表示子节点或子孙节点    //href//a   表示从res的任意位置开始匹配href下包括所有子孙节点的a标签
-
-
-
-正则
-    res.xpath('//div/a[contains(@href,"image")]/text()').re('Name: (.*)')
-       把前面获取到的对象,根据re()里面的正则表达式进行处理
-    res.xpath('//div/a[contains(@href,"image")]/text()').re_first('Name: (.*)')
-        re_first(),只提取出满足要求的第一个
+    /表示子节点
+    //表示子节点或子孙节点    //href//a   表示从res的任意位置开始匹配href下包括所有子孙节点的a标签
 
 
+
+    正则
+        res.xpath('//div/a[contains(@href,"image")]/text()').re(r'Name: (.*)')
+           把前面获取到的对象,根据re()里面的正则表达式进行处理
+        res.xpath('//div/a[contains(@href,"image")]/text()').re_first(r'Name: (.*)')
+            re_first(),只提取出满足要求的第一个
+
+
+    .xpath()和.css()可以嵌套使用， .re(r''),不能嵌套使用
 
 
 

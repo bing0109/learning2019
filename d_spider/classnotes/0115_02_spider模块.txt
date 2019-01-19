@@ -1,34 +1,53 @@
 spider
-    链接配置、爬取逻辑、解析数据
-    
+    链接配置、爬取逻辑、解析逻辑
+    简单来讲，Spider就做两件事情：
+        定义爬取的动作
+        分析爬取下来的网页
+
+    name
+        定义spider名字的字符串(string)。spider的名字定义了Scrapy如何定位(并初始化)spider，所以其必须是唯一的。 不过您可以生成多个相同的spider实例(instance)，这没有任何限制。 name是spider最重要的属性，而且是必须的。
+
+    allow_domains
+        允许爬取的域名，是可选配置，不在此域名范围的链接，不会被跟进爬取。
+        可选
+        
+    start_urls
+        URL列表。当没有制定特定的URL时，spider将从该列表中开始进行爬取。 因此，第一个被获取到的页面的URL将是该列表之一。 后续的URL将会从获取到的数据中提取。
 
 
+    custom_settings
+        它是一个字典，是专属于Spider的配置，此方法会覆盖全局的配置，此设置必须在初始化前被更新，必须定义成类变量。
 
 
+    start_requests()
+        此方法用于生成初始请求，它必须必须返回一个可迭代对象。此方法会默认使用start_urls里面的URL来构建Request，而且Request是以GET方式进行请求。如果我们想在启动时，想以POST的请求方式访问某个网站，可以直接重写这个方法。
+        写了此方法后，start_urls就没用了
+
+    from_crawler()
+        使用该方法可以获取Crawler对象里面的项目组件配置信息。此方法和Pipeline里面使用是一样的。
+    crawler
+        它是由from_crawler方法设置的，代表本Spider对应的Crawler对象，包含了许多项目组件。我们可以利用它来获取项目中的一些配置信息，最常见的就是从settings.py里面获取项目的配置信息。
 
 
+    parse()
+        当response没有指定回调函数时，该方法是Scrapy处理下载的response的默认方法。
+        parse 负责处理response并返回处理的数据以及(/或)跟进的URL。 Spider 对其他的Request的回调函数也有相同的要求。
+        该方法及其他的Request回调函数必须返回一个包含 Request、dict 或 Item 的可迭代的对象。
+
+    logger()
+        日志输出的方法，有info()和DEBUG()方法，可以输出日志的诶输出信息
+
+        def parse_page(self,response):
+            print(response.status）
+            self.logger.info(response.status)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    close()
+        当spider关闭时，该函数被调用。有一个参数reason，表示当前参数中断的原因。
+        
+        def close(self, spider, reason):
+            print('++++++++++++')
+            self.logger.debug(reason)
 
 
 

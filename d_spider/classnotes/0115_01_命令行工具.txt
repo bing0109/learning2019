@@ -1,3 +1,6 @@
+$ scrapy 
+Scrapy 1.5.1 - no active project
+
 Usage:
   scrapy <command> [options] [args]
 
@@ -33,6 +36,60 @@ Python       : 3.7.0 (default, Jun 28 2018, 13:15:42) - [GCC 7.2.0]
 pyOpenSSL    : 18.0.0 (OpenSSL 1.0.2p  14 Aug 2018)
 cryptography : 2.3.1
 Platform     : Linux-4.4.0-21-generic-x86_64-with-debian-stretch-sid
+
+
+
+
+
+
+Scrapy提供了两种类型的命令。一种必须在Scrapy项目中运行(针对项目(Project-specific)的命令)，另外一种则不需要(全局命令)。全局命令在项目中运行时的表现可能会与在非项目中运行有些许差别(因为可能会使用项目的设定)。
+
+    全局命令:
+        startproject
+        settings
+        runspider
+        shell
+        fetch
+        view
+        version
+    
+    项目(Project-only)命令:
+        crawl
+        check
+        list
+        edit
+        parse
+        genspider
+        deploy
+        bench
+
+
+
+创建项目
+    scrapy startproject myproject
+    
+创建一个新的spider:
+    scrapy genspider mydomain mydomain.com
+
+
+使用spider进行爬取
+    scrapy crawl myspider
+    
+检查语法错误
+    scrapy check [-l] <spider>
+
+列出当前项目中所有可用的spider
+    scrapy list
+    
+在浏览器中打开给定的URL，并以Scrapy spider获取到的形式展现。 有些时候spider获取到的页面和普通用户看到的并不相同。 因此该命令可以用来检查spider所获取到的页面，并确认这是您所期望的。
+    scrapy view <url>
+
+以给定的URL(如果给出)或者空(没有给出URL)启动Scrapy shell
+    scrapy shell [url]
+
+输出Scrapy版本。配合 -v 运行时，该命令同时输出Python, Twisted以及平台的信息，方便bug提交。
+    scrapy version [-v]
+
 
 
 

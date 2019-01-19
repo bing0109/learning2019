@@ -1,5 +1,8 @@
-
+Downloader Middlewares的用法
+    下载中间件是处于引擎(Engine)和下载器（DownLoader）)之间的一层组件，可以有多个下载中间件被加载运行。
 关闭某些默认开启的模块
+
+
 settings.py里面相应位置设置为None
     eg:关闭连不上自动重试（3次）的模块
     DOWNLOADERMIDDLEWARE = {
@@ -7,19 +10,57 @@ settings.py里面相应位置设置为None
     }
 
 
-    def process_request(self, request, spider):
-        return None         # 加代理，加请求头，cookie等
-        return request
-        return response     # 和selenium对接
+当引擎传递请求给下载器的过程中，下载中间件可以对请求进行处理 （例如增加http header信息，增加proxy信息等）；
+在下载器完成http请求，传递响应给引擎的过程中， 下载中间件可以对响应进行处理（例如进行gzip的解压等）
+
+
+可以通过在某项目下的终端输入：
+scrapy settings --get=DOWNLOADER_MIDDLEWARES_BASE
+来查看该项目开启的内置Downloader Middlewares的名称和优先级。
+
+
+2. 核心方法
+    Scrapy内置的Downloader Middleware为Scrapy提供了基础的功能，但在项目实战里面我们往往需要单独自定义Downloader Middleware。
+    每个Downloader Middleware都定义了一个或多个类方法，核心方法主要有三个：
+        process_request(request, spider)
+        process_response(request, response, spider)
+        process_exception(request, exception, spider)
     
+    def process_request(self, request, spider):
+        return None         # Scrapy将继续处理该request；
+                                场景：加代理，加请求头，cookie等
+        return request      # Scrapy则停止调用 process_request方法并重新调度返回的request。当新返回的request被执行后， 相应地中间件链将会根据下载的response被调用。
+        return response     # Scrapy将不会调用 任何 其他的 process_request() 或 process_exception() 方法，或相应地下载函数； 其将返回该response。 已安装的中间件的 process_response() 方法则会在每个response返回时被调用。
+                                场景：和selenium对接
+        抛出 IgnoreRequest  #     如果其raise一个 IgnoreRequest 异常，则安装的下载中间件的 process_exception() 方法会被调用。如果没有任何一个方法处理该异常， 则request的errback(Request.errback)方法会被调用。如果没有代码处理抛出的异常， 则该异常被忽略且不记录(不同于其他异常那样)。
+                                
+                                
+
     def process_response(self, request, response, spider):
         return None         
-        return request      # 检查响应等
-        return response     # 文件解压、检查响应状态
+        return request      # 如果其返回一个 Request 对象，则中间件链停止， 返回的request会被重新调度下载。处理类似于 process_request() 返回request所做的那样。
+                                场景：检查响应等
+        return response     # 如果其返回一个 Response (可以与传入的response相同，也可以是全新的对象)， 该response会被在链中的其他中间件的 process_response() 方法处理。 
+                                场景：文件解压、检查响应状态
 
-    def process_exception(self, request, exception, response):
+    def process_exception(self, request, exception, spider):
         return None         # 错误重试，处理一次
         return request      # 错误重试，处理多次
-        return response
-        
+        return response     
+
+
+
+
+
+
+
+
+
+
+
+
+Spider中间件(Middleware)
+    Spider中间件是介入到Scrapy的spider处理机制的钩子框架，您可以添加代码来处理发送给 Spiders 的response及spider产生的item和request。
+
+    https://scrapy-chs.readthedocs.io/zh_CN/latest/topics/spider-middleware.html
 
