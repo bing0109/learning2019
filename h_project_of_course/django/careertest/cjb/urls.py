@@ -33,6 +33,7 @@ urlpatterns = [
     url('company/', views.company),
     url('main/', views.main),
     url('login/', views.login),
+    url('login_process', views.login_process),
     url('get_jn_list/', views.get_jobneed_list),
     url('get_job_list/', views.get_job_list),
     url('get_te_list/', views.get_te_list),

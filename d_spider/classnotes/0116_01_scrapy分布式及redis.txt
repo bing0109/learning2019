@@ -22,7 +22,16 @@ redis安装
     (empty list or set)
     127.0.0.1:6379> 
     127.0.0.1:6379> exit            退出
-   
+    
+    切换数据库查询，select 2
+    127.0.0.1:6379> keys *
+    (empty list or set)
+    127.0.0.1:6379> select 2
+    OK
+    127.0.0.1:6379[2]> keys *
+    1) "session:07iw13dcss3jupn5mggay8u9443toh19"
+    127.0.0.1:6379[2]> 
+
 
 
 

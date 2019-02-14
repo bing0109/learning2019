@@ -10,9 +10,44 @@ from django.db import models
 from django.db.models import *
 from django.core.paginator import Paginator
 import json
-
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
+
+
+def login(request):
+    return render(request, 'pjs/login.html')
+
+
+def login_process(request):
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('pwd')
+
+        if UserHR.objects.filter(Q(user=username) & Q(password=password)):
+            request.session['user'] = username
+            print('----hr user--')
+            return render(request, 'cjb/company2.html')
+
+        elif UserExpert.objects.filter(Q(user=username) & Q(password=password)):
+            request.session['user'] = username
+            print('---expert user----')
+            return render(request, 'cjb/expert.html')
+
+        elif UserHR.objects.filter(Q(user=username) & Q(password=password)):
+            request.session['user'] = username
+            print('----admin user---')
+            return render(request, 'cjb/admin.html')
+        else:
+            print('---login failed---')
+            return HttpResponse('用户名密码不匹配')
+
+
+def check_login(request):
+
+    return render(request, 'cjb/checklogin.html')
+
+
 def jobneed3(request):
     return render(request, 'cjb/jobneed3.html')
 
@@ -21,6 +56,7 @@ def jobneed2(request):
     return render(request, 'cjb/base_hr2.html')
 
 
+@login_required
 def main(request):
     return render(request, 'cjb/company2.html')
 
@@ -228,9 +264,5 @@ def sub_invite_te_from_jn(request):
 def sub_invite_te_from_tester(request):
     return redirect('/cjb/tester/')
 
-
-def login(request):
-
-    return render(request, 'pjs/login.html')
 
 

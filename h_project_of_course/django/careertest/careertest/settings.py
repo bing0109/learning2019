@@ -25,8 +25,8 @@ SECRET_KEY = '9^nlvaip)$o@zs#4tr97^e(v2ugp+6(zh9%(mz@pdydhofm5_t'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = []
+ALLOWED_HOSTS = '*'
 
 # Application definition
 
@@ -83,11 +83,11 @@ WSGI_APPLICATION = 'careertest.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST':'localhost',
-        'PORT':3306,
-        'USER':'root',
-        'PASSWORD':'123456',
-        'NAME':'careertest',
+        'HOST': 'localhost',
+        'PORT': 3306,
+        'USER': 'root',
+        'PASSWORD': '123',
+        'NAME': 'careertest',
     }
 }
 
@@ -133,3 +133,15 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
+
+LOGIN_URL = 'cjb/login/'
+
+
+# 使用redis保存session数据
+SESSION_ENGINE = 'redis_sessions.session'
+SESSION_REDIS_HOST = 'localhost'
+SESSION_REDIS_PORT = 6379
+SESSION_REDIS_DB = 1
+SESSION_REDIS_PASSWORD = ''
+SESSION_REDIS_PREFIX = 'session'
+
