@@ -119,7 +119,8 @@
                     <div>
                         <div style="float: left; bottom: 5px; width:33%">
                             <p style="color: #5e5e5e">添加时间：{{ jns.create_time|date:'Y-m-d' }}</p>
-                            <p style="color: #5e5e5e">添加人员：{{ jns.create_hr_id__user}}</p>
+                            <!--<p style="color: #5e5e5e">添加人员：{{ jns.create_hr_id__user}}</p>    /* 对象用. ，数据集用__ */   -->
+                            <p style="color: #5e5e5e">添加人员：{{ jns.create_hr_id.user}}</p>
                         </div>
                         <div style="float: left; width:33%; text-align: center">
                             <button type="button" class="btn btn-info invite_tester" id="invite_tester_{{ jns.id }}">邀请测试</button>
@@ -299,10 +300,6 @@
                 alert('fail')
             }
         });
-
-
-
-
     });
 
     // 提交职位需求

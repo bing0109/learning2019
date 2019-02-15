@@ -1,6 +1,6 @@
 # coding=utf-8
-from django.shortcuts import render, redirect
-from django.http import HttpResponse,JsonResponse
+from django.shortcuts import render, redirect, render_to_response
+from django.http import HttpResponse,JsonResponse, HttpResponseRedirect
 import time
 from cjb.models import Testchart, Report
 from zjj.models import Job, Jobneed, Tester
@@ -11,7 +11,7 @@ from django.db.models import *
 from django.core.paginator import Paginator
 import json
 from django.contrib.auth.decorators import login_required
-
+from django.views.decorators.csrf import csrf_exempt
 # Create your views here.
 
 
@@ -26,8 +26,9 @@ def login_process(request):
 
         if UserHR.objects.filter(Q(user=username) & Q(password=password)):
             request.session['user'] = username
+            request.session.set_expiry(0)
             print('----hr user--')
-            return render(request, 'cjb/company2.html')
+            return redirect('/cjb/company/')
 
         elif UserExpert.objects.filter(Q(user=username) & Q(password=password)):
             request.session['user'] = username
@@ -43,9 +44,36 @@ def login_process(request):
             return HttpResponse('用户名密码不匹配')
 
 
-def check_login(request):
+def check_login(func):
+    def checklogin(request, *args, **kwargs):
+        is_login = request.session.get('user', False)
+        if is_login:
+            return func(request, *args, **kwargs)
+        else:
+            return redirect('/cjb/login/')
+            # return HttpResponseRedirect(request, 'pjs/login.html')
 
-    return render(request, 'cjb/checklogin.html')
+    return checklogin
+
+
+def logout(request):
+    is_login = request.session.get('user', False)
+    if is_login:
+        del request.session['user']
+        request.session.clear()
+        return redirect('/cjb/login/')
+    else:
+        return HttpResponse('您还未登录，请登录，谢谢！')
+
+# 注销使用
+# request.session.clear()
+#
+# 设置超时时间，set_expiry(value)方法是在最后一次刷新开始计算
+# request.session.set_expiry(value)
+# * 如果value是个整数，session会在些秒数后失效。
+# * 如果value是个datatime或timedelta，session就会在这个时间后失效。
+# * 如果value是0,用户关闭浏览器session就会失效。
+# * 如果value是None,session会依赖全局session失效策略。
 
 
 def jobneed3(request):
@@ -56,15 +84,21 @@ def jobneed2(request):
     return render(request, 'cjb/base_hr2.html')
 
 
-@login_required
+# @login_required
 def main(request):
-    return render(request, 'cjb/company2.html')
+    return render(request, 'cjb/company.html')
 
 
+@check_login
 def company(request):
-    return render(request, 'cjb/company2.html')
+    if request.session['user']:
+        session_user = request.session['user']
+
+    context = {'session_user': session_user, 'nav_title': 'company'}
+    return render(request, 'cjb/company.html', context)
 
 
+@check_login
 def jobneed_query(request):
     # if request.is_ajax():
         # jns = Jobneed.objects.values('id', 'create_hr_id__user', 'create_time', 'jobneed_name', 'jobneed_status')
@@ -83,13 +117,19 @@ def jobneed_query(request):
 
     print(jns, '-------jns-----')
     nav_title = 'jobneed'
-    context = {'ob_jns': jns, 'nav_title': nav_title}
+
+    if request.session['user']:
+        session_user = request.session['user']
+
+    context = {'ob_jns': jns, 'nav_title': nav_title, 'session_user': session_user}
+
     print(context, '----jn--context---')
-    return render(request, 'cjb/jobneed2.html', context)
+    return render(request, 'cjb/jobneed.html', context)
     # else:
     #     return redirect('/cjb/main/')
 
 
+@check_login
 def jobneed_add(request):
     if request.is_ajax():
         jn_name = request.POST.get('jn_name')
@@ -116,7 +156,8 @@ def jobneed_add(request):
             jn_data.moding_id = None
 
         try:
-            create_name = request.sessions.get('HR')
+            create_name = request.session['user']
+            # print(create_name, '-----create_name-----')
             jn_data.create_hr_id = UserHR.objects.get(user=create_name)
         except Exception:
             jn_data.create_hr_id = UserHR.objects.get(pk=1)
@@ -131,17 +172,20 @@ def jobneed_add(request):
 
     jns = Jobneed.objects.all()
     context = {'ob_jns': jns}
-    return render(request, 'cjb/jobneed2.html', context)
+    return render(request, 'cjb/jobneed.html', context)
 
 
+@check_login
 def jobneed_edit(request):
-    return render(request, 'cjb/jobneed2.html')
+    return render(request, 'cjb/jobneed.html')
 
 
+@check_login
 def jobneed_detail(request):
-    return render(request, 'cjb/jobneed2.html')
+    return render(request, 'cjb/jobneed.html')
 
 
+@check_login
 def jobneed_del(request):
     if request.is_ajax():
         jn_id = request.POST.get('id')
@@ -158,6 +202,7 @@ def jobneed_del(request):
         return JsonResponse(context)
 
 
+@check_login
 def get_jobneed_list(request):
     if request.is_ajax():
         jns = Jobneed.objects.filter(isdelete=False).values('id', 'jobneed_name')
@@ -167,6 +212,7 @@ def get_jobneed_list(request):
     return JsonResponse(context, safe=False)
 
 
+@check_login
 def get_job_list(request):
     if request.is_ajax():
         jbs = Job.objects.filter(isdelete=False).values('id', 'jobname', 'moding_id', 'moding_id__name')
@@ -175,6 +221,7 @@ def get_job_list(request):
     return JsonResponse(context, safe=False)
 
 
+@check_login
 def get_te_list(request):
     if request.is_ajax():
         jn_id = request.POST.get('jn_id')
@@ -184,13 +231,20 @@ def get_te_list(request):
     return JsonResponse(context, safe=False)
 
 
+@check_login
 def tester_query(request):
     tes = Tester.objects.filter(isdelete=False).order_by('-id').values('id','create_hr_id__user', 'status', 'sex', 'jobneed_id__jobneed_name', 'name')
-    context = {'obj_tes': tes, 'nav_title': 'tester'}
     # print(context, '---testquery---')
+
+    if request.session['user']:
+        session_user = request.session['user']
+
+    context = {'obj_tes': tes, 'nav_title': 'tester', 'session_user': session_user}
+
     return render(request, 'cjb/tester.html', context)
 
 
+@check_login
 def tester_add(request):
     te_name = request.POST.get('te_name')
     te_sex = request.POST.get('te_sex')
@@ -229,10 +283,12 @@ def tester_add(request):
     return redirect('/cjb/tester/')
 
 
+@check_login
 def tester_edit(request):
     return render(request, 'cjb/tester.html')
 
 
+@check_login
 def tester_del(request):
     if request.is_ajax():
         te_id = request.POST.get('id')
@@ -249,6 +305,7 @@ def tester_del(request):
         return JsonResponse(context)
 
 
+@check_login
 def sub_invite_te_from_jn(request):
     jn_id = request.POST.get('invite_te_jn_id')
     te_id = request.POST.get('jn_select_te')
@@ -261,8 +318,25 @@ def sub_invite_te_from_jn(request):
     return redirect('/cjb/jobneed/')
 
 
+@check_login
 def sub_invite_te_from_tester(request):
     return redirect('/cjb/tester/')
 
 
+def page_not_found(request):
+    # return HttpResponse('404,找不到页面！')
+    return render_to_response('404.html')
+    # 404网页要直接放在templates目录下，不能在其他目录下
+    # 要用render_to_response，不能用HttpResponse
 
+
+def page_error(request):
+    return render_to_response('500.html')
+
+
+def page403(request):
+    return render_to_response('403.html')
+
+
+def page400(request):
+    return render_to_response('400.html')

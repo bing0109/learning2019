@@ -24,9 +24,9 @@ SECRET_KEY = '9^nlvaip)$o@zs#4tr97^e(v2ugp+6(zh9%(mz@pdydhofm5_t'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
+# DEBUG = False     # 关闭debug，访问页面出错时，前台不会显示具体代码
 
-# ALLOWED_HOSTS = []
-ALLOWED_HOSTS = '*'
+ALLOWED_HOSTS = ['localhost', '192.168.6.118', '127.0.0.1']
 
 # Application definition
 
@@ -42,8 +42,6 @@ INSTALLED_APPS = [
     'pjs',
     'qsj',
     'zjj',
-
-
 ]
 
 MIDDLEWARE = [
@@ -61,7 +59,7 @@ ROOT_URLCONF = 'careertest.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -134,7 +132,7 @@ STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static')
 ]
 
-LOGIN_URL = 'cjb/login/'
+LOGIN_URL = '/cjb/login/'
 
 
 # 使用redis保存session数据

@@ -65,11 +65,19 @@ https://blog.csdn.net/best_luxi/article/details/45062301
 django、ajax的结合？
 
 
-https://www.cnblogs.com/ailhc/p/6586465.html
-	git添加公钥后报错sign_and_send_pubkey: signing failed: agent refused operation的解决办法
-　　在服务器添加完公钥后报错
-        sign_and_send_pubkey: signing failed: agent refused operation
-    这个时候我们只要执行下
-        eval "$(ssh-agent -s)"
-        ssh-add
+
+外键查询什么时候用__，什么时候用 .
+http://www.mamicode.com/info-detail-1847094.html
+    要分清楚Object对象和QuerySet查询集
+        查询集做跨表查询时，使用双下划线"__"
+        对象获取某一列值(或者说是获取某个属性)的时候，使用点来获取。我们跨表查询时，也是使用点来获取。
+
+
+
+
+
+
+
+
+
 

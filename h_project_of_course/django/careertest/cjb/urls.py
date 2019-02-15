@@ -33,10 +33,18 @@ urlpatterns = [
     url('company/', views.company),
     url('main/', views.main),
     url('login/', views.login),
-    url('login_process', views.login_process),
+    url('login_process/', views.login_process),
+    url('logout/', views.logout),
     url('get_jn_list/', views.get_jobneed_list),
     url('get_job_list/', views.get_job_list),
     url('get_te_list/', views.get_te_list),
     url('sub_invite_te_from_jn/', views.sub_invite_te_from_jn),
     url('sub_invite_te_from_tester/', views.sub_invite_te_from_tester),
+
 ]
+
+
+handler404 = views.page_not_found
+handler500 = views.page_error
+handler403 = views.page403
+handler400 = views.page400
