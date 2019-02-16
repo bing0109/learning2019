@@ -1,5 +1,10 @@
 django开发完成后如何归档
 
 装饰器 -- 登录  django
+    见项目/learning2019/h_project_of_course/django
+    
+django signals
+
+    https://segmentfault.com/a/1190000008455657
 
 
