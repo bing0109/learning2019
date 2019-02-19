@@ -1,0 +1,54 @@
+用matplotlib画图
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+plt.rcParams['font.sans-serif']=['SimHei']  #解决中文显示问题，Windows系统下这么写，linux根据实际情况写
+plt.rcParams['axes.unicode_minus'] = False     # 解决坐标轴负号显示问题
+x=np.arange(0,4,0.01)
+y=np.sin(2*np.pi*x)         # np.pi是π，3.14
+plt.figure(figsize=(9,6))
+plt.plot(x,y,linestyle='--',linewidth=3,color='r')   #划线
+plt.xlim(0,4)           #设置x轴显示范围
+plt.ylim(-1,1)          #设置y轴显示范围
+plt.grid()              #显示网格
+plt.xlabel('时间(s)',fontsize=12)    #设置x轴标题
+plt.ylabel('',fontsize=12) #设置y轴标题
+plt.title('sin(2π*x)')   # 设置标题
+plt.text(1.5,0.25,'abcdef',fontsize=12) #在[1.5,0.25]插入文本
+plt.show()  # 显示出来，在pycharm和命令行可用到
+plt.savefig('sin.png',dpi=300)  #保存成图片，分辨率300,要把plt.show先注释掉
+
+
+
+
+
+
+fig = plt.figure(figsize=(10,15))
+ax = fig.subplots(3,2)
+
+
+
+
+
+fig=plt.figure(figsize=(10,15))
+ax = fig.subplots(3,2)
+x=np.random.normal(2,2,10000)
+print(x)
+ax[0][0].hist(x,bins=30,density=True,color='r',alpha=0.5)#\u05b1\Uffffffff\Uffffffff\u037c
+y=np.random.normal(0,1,10000)
+ax[0][0].hist(y,bins=30,density=True,color='b',alpha=0.5)#\u05b1\Uffffffff\Uffffffff\u037c
+
+x1 = np.arange(1,21)
+y1 = np.random.randint(1,10,20)
+ax[0][1].scatter(x1,y1,marker='v',color='g',alpha=0.8)#\u0262\Uffffffff\Uffffffff
+
+
+
+用parse画图
+
+
+Note Sans CJK JP
+
+

@@ -19,7 +19,7 @@
 数据科学基础库
     科学计算库   Numpy
     分析处理库   Numpy Pandas
-    可视化库     Matplotlib Seaborn Echarts
+    可视化库     Matplotlib Seaborn(斯坦福) Echarts(百度)
     机器学习库   Scikit-learn  Statsmodels
 
 
