@@ -1,0 +1,111 @@
+
+丢掉指定数据轴上的数据
+    data.drop('one',axis=1)     # 丢掉‘one’列，axis默认0，表示行
+
+
+
+函数应用和映射
+    apply()、applymap()、map()
+   
+    apply() 把dataframe的每一列分别逐列传（1个Series）给函数f进行处理
+        def f:
+            ...
+            return ..
+            
+        df.apply(f)
+        df.apply(f,axis=1)  逐行处理
+        
+        说明： 如果df是Series数据表，apply()就是逐个元素处理
+                如果是DataFrame对象，apply()就是逐行或列处理
+    
+    applymap() 逐元素处理，针对DataFrame对象
+        func = lambda x:abs(x)
+        
+        df.applymap(func)
+
+    map() 针对Series数据表，逐元素处理
+        df['one'].map(func)
+
+
+    
+排序和排名
+    sort_index()
+    sort_values()
+    
+    基于索引排序sort_index()
+        data.sort_index()   # 根据行索引排序，升序
+        data.sort_index(ascending=False)    #ascending=False，表示降序
+        data.sort_index(axis=1)    #根据列索引排序
+        data.sort_index(axis=1)
+
+        索引缺失的时候
+            data.sort_index(na_position='first')    #缺失的索引排第1位 
+            data.sort_index(na_position='last')     #缺失的索引排末尾
+
+
+    基于值排序sort_values()
+        df.sort_values(by='col2')   # 以col2列排序，默认升序
+        df.sort_values(by='col2',ascending=False)   # 以col2列排序，ascending=False表示降序
+        df.sort_values(by=['col2','col3'])  #以col2第一优先级排序，以col3第二优先级排序
+        df.sort_values(by='col2',na_position='first')   #na_position='first'定义有缺失值的时候放的位置
+        df.sort_values('by='col3',ascending=False').sort_values(by='col2')  #以col2第一优先级升序排序，以col3第二优先级降序排序（注意写的顺序）
+        
+
+
+
+数据合并
+    pandas.merge()
+    pandas.concat()
+    combine_first()
+    
+    pandas.merge() 根据一个或多个键把两个不同的DataFrame进行连接
+        df1.merge(df2,left_on='col11',right_on='col21')
+            如果某个元素在dif1.col11和df2.col21中都出现2次，合并后的数据就会出现4条数据（交叉合并）
+        df1.merge(df2,on='col1') #两个表的合并的依据列名都是'col1'，就可以直接用on=‘col1’
+
+        df1.merge(df2,left_on='col11',right_on='col21',how='outer')
+            how='outer'     #外联，两个表中所有的数据都展现，一个表中有的，另一个表中没有，对应位置就填缺失
+            how='left'      #左联，左边的表df1都显示出来，右边的df2就不显示
+            how='right'     #右联，与左联相反
+            how='inner'     #内联，默认值，两个表中都由的才显示出来
+
+        根据索引合并
+            df1.merge(df2,left_on=True,right_on=True,how='outer')
+        一个根据索引，一个根据列名称合并
+            df1.merge(df2,left_on='col1',right_on=True,how='outer')
+
+
+    pd.concat([df1,df2])
+        把df2拼接在df1下面
+            注意：df1，df2最好列索引名称相同，否则对应就会填充nan，拼接意义不大
+        
+        pd.concat([df1,df2],sort=True)  #sort=True解决一个告警问题
+        pd.concat([df1,df2],sort=True,axis=1) #根据行索引合并
+
+
+    combine_first()合并重叠数据(打补丁)
+        df1.combine_first(df2)
+            用df2把第一个表填补一下，在索引相同的位置，如果df1是nan，df2有值，就用df2的元素填补df1的相应位置
+
+
+
+数据重塑
+    stack()     将数据的列翻转为行
+    unstack()   将数据的行翻转为列
+    
+    默认是翻转最靠近数据的那一层索引(内层索引)，也可以指定翻转索引层
+        df.unstack(0) 翻转0层的行索引
+        df.unstack()  如果有2层索引，就等效df.unstack(1)
+        
+        df.stack()同理
+
+
+
+
+
+
+
+
+
+
+

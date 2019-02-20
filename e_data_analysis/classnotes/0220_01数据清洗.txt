@@ -1,0 +1,240 @@
+数据清洗
+    格式转换
+    缺失值
+    异常值处理
+
+
+缺失值处理
+    离散型：
+        例如：性别缺失部分，新增个unknown
+    连续型：
+        1，删除，缺失太多，就不考虑这个数据了
+            df.dropna()         #删除行
+            df.dropna(axis=1)   #删除列
+            df.dropna(how='all')  #如果某行全部是缺失的，才删除，否则不删除
+            df.dropna(how='all',inplace=True)  # inplace=True删除后的表格更新原数据
+            
+        2，填补，缺失不多，可填补平均数或中位数
+            fillna()
+            
+            df.fillna(10)   #所有缺失值都填充位10
+            df['price']=df['price'].fillna(100)  # 'price'列的缺失值填充为100
+            df.fillna({'price':2000,'city':'unknow'})   # 通过字段填充，'price'列的缺失值填充为2000，'city'列的缺失值填充为unknow
+            df.fillna(method='bfill')   # 后向填充，对于缺失值后面还是缺失值的，就不填
+            df.fillna(method='ffill',limit=1)   # 前向填充，limit=1限制数量（连续的2个缺失值，只填充第一个，后一个仍然保持缺失状态）
+            
+            df['city']=df['city'].replace(np.nan, 'shenzheng')  # 把city列的缺失值替换成‘shenzheng’
+            df['city']=df['city'].replace('BJ', 'SZ')  # 把city列的'BJ'替换成'SZ'
+            
+            
+        3，预测，通过模型预测
+
+
+
+异常值处理
+    根据常识判断，eg，年龄100岁的员工
+    发现异常的方法：
+        1、箱型图
+            https://baike.baidu.com/item/%E7%AE%B1%E5%BD%A2%E5%9B%BE/10671164?fr=aladdin
+        2、标准值
+            https://baike.baidu.com/item/%E5%88%87%E6%AF%94%E9%9B%AA%E5%A4%AB%E5%AE%9A%E7%90%86/3647561?fr=aladdin&fromid=8709330&fromtitle=%E5%88%87%E6%AF%94%E9%9B%AA%E5%A4%AB%E4%B8%8D%E7%AD%89%E5%BC%8F
+            （切比学夫不等式）
+
+
+
+
+
+
+字符串处理
+    针对Series处理
+    ds表示一个series数据表
+    ds.str.title()      # 字符串首字母大写
+    ds.str.strip()      # 去除两边的空白符
+    ds.str.lstrip()     # 去除左边的空白符
+    ds.str.replace('a', 'b') 
+
+    拆分
+    ds.str.split('_')   #根据_拆分元素为列表
+    合并
+    ds.str.split('_').str.join('-') # 把列表元素合并，以-连接
+        注：普通的列表合并写法不同：'-'.join(list)
+    
+    ds.str.contains('c', na=False)  # 检查元素是否包含‘c’，符合返回true，不包含就返回False 
+    ds.str.startswith('c', na=False)  # 检查元素是否以‘c’开头，符合返回true，不符合就返回False
+    ds.str.endswith('c', na=False)  # 检查元素是否以‘c’结尾，符合返回true，不符合就返回False 
+
+
+    判断重复项
+    df.duplicated()     #重复项返回true（第一次出现不算重复，返回False，再次出现的算重复，返回true）
+    df.duplicated(keep='last')  # keep='last'从后面往前面排除？
+    删除重复项
+    df.drop_duplicates()    整行内所有元素都重复才删除
+    df[['k1','k2']].drop_duplicates()   行内'k1','k2'列的元素都相同就删除
+
+
+    重命名轴索引
+    data.index=['a','b','c']    行索引名称更新为'a','b','c'
+    data.rename(index={'shenzhen':'sz','shanghai':'sh'},columns={'one':'a','two':'b'},inplace=True)
+        # 接收字典，行索引名称'shenzhen'改成'sz'，列索引名称'one'改成'a',.......
+    data.rename(index=str.lower)    #接收函数，把行索引都转换成小写
+
+
+
+离散化
+    1、等距离散化
+        按一定的步长分类数据，
+            eg，有100个人，按年龄每5岁分类，有些年龄段的人多，有些就比较少或者没有
+        
+        >>> age = np.random.normal(20,5,10000)
+        >>> pd.cut(age,bins=4)  # 等距分成4类
+        [(19.062, 28.415], (0.32, 9.71], (9.71, 19.062], (19.062, 28.415], (28.415, 37.767], ..., (9.71, 19.062], (19.062, 28.415], (19.062, 28.415], (9.71, 19.062], (19.062, 28.415]]
+        Length: 10000
+        Categories (4, interval[float64]): [(0.32, 9.71] < (9.71, 19.062] < (19.062, 28.415] <
+                                            (28.415, 37.767]]
+
+        >>> pd.cut(age,bins=10).value_counts()  # 每种类型的数量
+        (0.32, 4.098]          7
+        (4.098, 7.839]        68
+        (7.839, 11.58]       384
+        (11.58, 15.321]     1283
+        (15.321, 19.062]    2475
+        (19.062, 22.803]    2894
+        (22.803, 26.544]    1885
+        (26.544, 30.285]     801
+        (30.285, 34.026]     179
+        (34.026, 37.767]      24
+        dtype: int64
+
+        自定义位置
+        >>> nums = np.random.randint(0,20,1000)
+        >>> bins = [0,5,8,10,18,20]  # 自定义
+        >>> 
+        >>> pd.cut(nums,bins=bins)
+        [(10, 18], (10, 18], (18, 20], (0, 5], (10, 18], ..., (10, 18], (0, 5], NaN, (5, 8], (0, 5]]
+        Length: 1000
+        Categories (5, interval[int64]): [(0, 5] < (5, 8] < (8, 10] < (10, 18] < (18, 20]]
+        >>> pd.cut(nums,bins=bins,right=False)  # right=False，把区间由左开右闭改成左闭右开
+        [[10, 18), [10, 18), [18, 20), [5, 8), [18, 20), ..., [10, 18), [5, 8), [0, 5), [5, 8), [0, 5)]
+        Length: 1000
+        Categories (5, interval[int64]): [[0, 5) < [5, 8) < [8, 10) < [10, 18) < [18, 20)]
+
+        >>> pd.cut(nums,bins=bins).value_counts()
+        (0, 5]      234
+        (5, 8]      146
+        (8, 10]      83
+        (10, 18]    437
+        (18, 20]     53
+        dtype: int64
+        
+        给每个类别设置标签名
+        >>> labels = ['a','b','c','d','e']
+        >>> pd.cut(nums,bins=bins,labels=labels).value_counts()
+        a    234
+        b    146
+        c     83
+        d    437
+        e     53
+        dtype: int64
+        >>> pd.cut(nums,bins=bins,labels=labels)
+        [d, d, e, a, d, ..., d, a, NaN, b, a]
+        Length: 1000
+        Categories (5, object): [a < b < c < d < e]
+
+         
+    2、等频离散化
+        eg，由10个人，按某一规则分成5类，保证每一类都有2个人
+        >>> data = np.random.randn(1000)
+        >>> pd.qcut(data,q=5)
+        [(0.267, 0.844], (-3.102, -0.794], (-0.794, -0.27], (-0.27, 0.267], (0.267, 0.844], ..., (-0.27, 0.267], (-0.27, 0.267], (0.267, 0.844], (-0.794, -0.27], (-0.27, 0.267]]
+        Length: 1000
+        Categories (5, interval[float64]): [(-3.102, -0.794] < (-0.794, -0.27] < (-0.27, 0.267] <
+                                            (0.267, 0.844] < (0.844, 3.111]]
+        >>> pd.qcut(data,q=5).value_counts()    # 接收数字，分成5份
+        (-3.102, -0.794]    200
+        (-0.794, -0.27]     200
+        (-0.27, 0.267]      200
+        (0.267, 0.844]      200
+        (0.844, 3.111]      200
+        dtype: int64
+
+        >>> pd.qcut(data,q=[0,0.1,0.4,1]).value_counts()    # 接收列表，指定分位数
+        (-3.102, -1.265]    100
+        (-1.265, -0.27]     300
+        (-0.27, 3.111]      600
+        dtype: int64
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -49,6 +49,5 @@ ax[0][1].scatter(x1,y1,marker='v',color='g',alpha=0.8)#\u0262\Uffffffff\Ufffffff
 用parse画图
 
 
-Note Sans CJK JP
 
 
