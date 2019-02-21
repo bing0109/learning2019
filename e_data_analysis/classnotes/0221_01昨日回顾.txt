@@ -1,0 +1,63 @@
+
+昨日回顾
+    数据清洗
+        1、缺失值处理
+            dropna()    how='all'表示整行都是缺失值才删除
+            fillna()    method  前向填充还是后向填充
+            replace()   替换
+        2、字符串处理
+            针对Series对象
+                ds.str.~()      title(),lower(),upper(),strip(),split(),join()
+                
+                contains('a'),startswith('a'),endswith('a')
+                
+                slice(start,stop,step)  切片
+                
+        3、重命名索引
+            rename(index=,columns=),可接收字典或函数
+            
+        4、删除重复项
+            duplicated()    判断是否重复，返回true或False
+            drop_duplicates() 删除重复项目
+            
+        5、离散化
+            pd.cut()    等距离散化
+            pd.qcut()   等频离散化
+
+
+        6、删除
+            drop(['',''],axis=0/1)  删除行或列
+        
+        7、函数映射
+            DataFrame对象：
+                    apply(f)    逐列处理
+                    applymap(f) 逐元素处理
+            Series对象：
+                    apply(f)     逐元素处理
+                    map(f)       逐元素处理
+                    
+            说明，如果是多个DataFrame对象的集合，apply()就是逐个DataFrame处理
+
+        8、排序
+            sort_index(ascending=False,axis=1/0)        根据索引排序
+            sort_values(by=''/['',''],ascending=False,axis=1/0)  根据元素排序
+        
+
+        9、合并
+            df1.merge(df2, left_on='',right_on='',how='inner/outer/right/left')
+            df1.merge(df2, left_index='',right_index='')
+            df1.merge(df2, left_on='',right_index='')
+
+          拼接
+            pd.concat([df1,df2,df3],axis=0/1)  #axis=0/1表示拼接在下面还是后面
+           
+          打补丁
+            df1.combine_first(df2)
+
+        10、重塑
+            stack()     把列变成行
+            unstack()   把行变成列
+
+
+
+

@@ -80,7 +80,7 @@
             注意：df1，df2最好列索引名称相同，否则对应就会填充nan，拼接意义不大
         
         pd.concat([df1,df2],sort=True)  #sort=True解决一个告警问题
-        pd.concat([df1,df2],sort=True,axis=1) #根据行索引合并
+        pd.concat([df1,df2],sort=True,axis=1) #根据行索引合并，拼接在后面（右边）
 
 
     combine_first()合并重叠数据(打补丁)

@@ -1,0 +1,94 @@
+
+
+
+df1 = 
+df2 = 
+
+加   df1.add(df2,fill_value=0)
+减   df1.sub(df2,fill_value=0)
+乘   df1.mul(df2,fill_value=1)
+除   df1.div(df2,fill_value=1)
+
+
+求和              df1.sum(axis=0/1)
+
+求平均值/期望值    df1.mean(axis=0/1)
+
+
+求中位数            df.median()
+
+统计各列的元素数量   df.count()
+
+
+统计各列独一无二元素的数量 df.nunique()
+
+df.cumprod()    累计乘积    
+df.cumsum()     累计和
+
+df.var()    求方差
+df.std()    求标准差，方差开根d号
+
+df.discribe()   汇总统计一些数据，如count,mean,min,25%,50%,75%,max
+
+    df.discribe(percentiles=[0.1,0.6])  自定义显示结果
+    df.discribe(include='all')  显示统计结果更多，多unique,top,freq 这三列
+                include='all'       统计所有的数据
+                include=np.object   只统计离散型的数据，unique,top,freq 这三列
+                include=np.number   只统计数值型的数据，默认值
+
+
+相关系数与协方差
+    考察两个变量之间的线性关系，
+    x = []
+    y = []
+    
+    协方差     ds.cov(ds)、df.cov()
+
+    相关系数    ds.corr(ds)、df.corr()
+        降维、特征选择、相关性
+
+    df['col1'].cov(df['col2'])  df的'col1'列和'col2'列的协方差结果
+    df['col1'].corr(df['col2']) df的'col1'列和'col2'列的相关系数结果
+    df.cov()    df数据表中各个数值列分别两两计算协方差，得到协方差矩阵
+    df.corr()    df数据表中各个数值列分别两两计算相关系数，得到相关系数矩阵
+
+
+
+数据聚合（***重点***）
+    df.groupby('col1')['col2'].mean()   以'col1'列拆分df数据表，后统计'col2'列的平均值
+    df.groupby(['col1','col2'])['col3'].sum()  以'col1'、'col2'列拆分df数据表。。。。。。
+    
+    df.groupby(['col1','col2'])['col3'].mean().unstack()     把返回的Series对象转换成DataFrame，看起来更直观
+    
+    
+
+
+透视表和交叉表（了解）
+    透视表
+        df.pivot_table(value='col3',index='col1',column='col2',aggfunc=numpy.mean,margins=True,margins_name='总计')
+        以col1和col2分别为行、列，统计col3的平均值
+            aggfunc：默认是numpy.mean求平均值
+            margins：默认是False，决定统计总计的数值
+            margins_name: 求的总计的数值的列名称，默认是‘all'
+        
+        和数据聚合groupby差不多
+        
+    交叉表
+        了解，与透视表功能差不多
+        pandas.crosstab(index=df['col1'],columns=df['col2'],values=df['col3'],aggfunc=np.mean)
+
+        统计频数
+        pandas.crosstab(index=df['col1'],columns=df['col2'])
+
+
+
+
+
+
+
+
+
+
+
+
+
