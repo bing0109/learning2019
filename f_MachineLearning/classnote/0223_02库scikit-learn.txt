@@ -1,0 +1,15 @@
+
+
+留一法：    数据集分成2份，一份用来做训练，一份用来做验证
+
+交叉验证（CV）：   把数据集分成3份，其中2份用来做训练，一份做验证，交叉循环3次，得到3个结果后取平均值
+
+
+gridsearchCV 网格搜索交叉验证
+
+https://scikit-learn.org/stable/modules/generated/sklearn.model_selection.GridSearchCV.html#sklearn.model_selection.GridSearchCV
+
+
+LassoCV
+https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LassoCV.html#sklearn.linear_model.LassoCV
+

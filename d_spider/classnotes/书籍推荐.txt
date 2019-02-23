@@ -18,7 +18,7 @@
     R语言     《R语言实战》                    R语言能做的python都能做
     SAS/SPSS    商业工具                       基本也在百万基本的数据
     SPARK       Hadoop（数据开发）            千万、亿级别
-        HIVE页数Hadoop的
+        HIVE也属于Hadoop的
 
 数据分析：
     统计学相关知识：eg假设检验，方差分析等
