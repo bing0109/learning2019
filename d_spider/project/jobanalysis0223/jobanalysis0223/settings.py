@@ -19,7 +19,7 @@ NEWSPIDER_MODULE = 'jobanalysis0223.spiders'
 #USER_AGENT = 'jobanalysis0223 (+http://www.yourdomain.com)'
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32
@@ -64,9 +64,10 @@ ROBOTSTXT_OBEY = True
 
 # Configure item pipelines
 # See https://doc.scrapy.org/en/latest/topics/item-pipeline.html
-#ITEM_PIPELINES = {
-#    'jobanalysis0223.pipelines.Jobanalysis0223Pipeline': 300,
-#}
+ITEM_PIPELINES = {
+    'jobanalysis0223.pipelines.Jobanalysis0223Pipeline': 300,
+    'jobanalysis0223.pipelines.MongoPipeline': 301
+}
 
 # Enable and configure the AutoThrottle extension (disabled by default)
 # See https://doc.scrapy.org/en/latest/topics/autothrottle.html
@@ -88,3 +89,7 @@ ROBOTSTXT_OBEY = True
 #HTTPCACHE_DIR = 'httpcache'
 #HTTPCACHE_IGNORE_HTTP_CODES = []
 #HTTPCACHE_STORAGE = 'scrapy.extensions.httpcache.FilesystemCacheStorage'
+
+# settings里面定义的变量名要用大写
+MONGO_URL = 'localhost'
+MONGO_DB = 'pachong'
