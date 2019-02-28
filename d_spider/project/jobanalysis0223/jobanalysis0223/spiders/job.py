@@ -37,10 +37,10 @@ class JobSpider(scrapy.Spider):
         total_page = int(res.get_text().split('/')[1].strip())
 
         keyword = response.meta['kw']
-        for i in range(1, total_page):
+        for i in range(1, 3):
             url = 'https://search.51job.com/list/040000%252C020000%252C010000%252C180200%252C030200,000000,0000,00,9,99,python,2,'+str(i)+'.html?lang=c&stype=&postchannel=0000&workyear=99&cotype=99&degreefrom=99&jobterm=99&companysize=99&providesalary=99&lonlat=0%2C0&radius=-1&ord_field=0&confirmdate=9&fromType=&dibiaoid=0&address=&line=&specialarea=00&from=&welfare='
             # yield url
-            time.sleep(random.random()*10+1)
+            time.sleep(random.random()*5+1)
             yield scrapy.Request(url=url, callback=self.parse_joblist, meta={'page': i, 'kw': keyword}, dont_filter=True)
 
     def parse_joblist(self, response):
@@ -49,9 +49,9 @@ class JobSpider(scrapy.Spider):
         for div in data_list[1:]:
             div = BeautifulSoup(div, 'html.parser')
             page_url = div.select('p > span > a')[0].attrs['href']
-            time.sleep(abs(random.normalvariate(2,4))+1)
+            time.sleep(abs(random.normalvariate(0,4))+1)
             # print(page_url,'-----------------------------')
-            yield scrapy.Request(url=page_url, callback=self.parse_job,meta={'kw':response.meta['kw']}, dont_filter=True)
+            yield scrapy.Request(url=page_url, callback=self.parse_job,meta={'kw':response.meta['kw']})
 
     def parse_job(self, response):
         res_temp = response.css('body > div.tCompanyPage > div.tCompany_center.clearfix').extract()
@@ -98,6 +98,25 @@ class JobSpider(scrapy.Spider):
         job_require = ''
         job_type = ''
         job_kw = ''
+
+        def proc_job_detail(kw_list,string,keyword):
+            kw_in_str=[]
+            for kw in kw_list:
+                if kw in string:
+                    kw_in_str.append(kw)
+
+            detail_list = re.split('|'.join(kw_in_str),string)
+            if keyword in kw_in_str:
+                job_keyword = detail_list[kw_in_str.index(keyword) + 1].strip()
+            else:
+                job_keyword = ''
+            return job_keyword
+
+        kw_list = ['职位信息', '任职要求', '职能类别：', '关键字：', '微信分享']
+
+        job_require = proc_job_detail(kw_list,job_detail,'任职要求')
+        job_type = proc_job_detail(kw_list,job_detail,'职能类别：')
+        job_kw = proc_job_detail(kw_list,job_detail,'关键字：')
 
         company_type = res.select('div.tCompany_sidebar > div:nth-of-type(1) > div.com_tag > p:nth-of-type(1)')[0].get_text().strip()
         company_size = res.select('div.tCompany_sidebar > div:nth-of-type(1) > div.com_tag > p:nth-of-type(2)')[0].get_text().strip()
@@ -153,3 +172,7 @@ class JobSpider(scrapy.Spider):
 
         return item
 
+
+'''
+scrapy crawl job -s JOBDIR='/home/zelin/data/joblist/'
+'''

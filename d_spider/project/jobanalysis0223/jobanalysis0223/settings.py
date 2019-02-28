@@ -93,3 +93,6 @@ ITEM_PIPELINES = {
 # settings里面定义的变量名要用大写
 MONGO_URL = 'localhost'
 MONGO_DB = 'pachong'
+
+
+JOBDIR = 'sharejs.com'

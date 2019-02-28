@@ -8,3 +8,5 @@ django signals
     https://segmentfault.com/a/1190000008455657
 
 
+机器学习模型保存，运行，调用？
+

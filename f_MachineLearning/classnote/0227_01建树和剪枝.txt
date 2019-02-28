@@ -1,0 +1,8 @@
+
+
+
+决策树最大深度max_depth一般设置为3-10
+
+min_samples_split
+min_samples_leaf
+
