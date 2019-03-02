@@ -1,0 +1,53 @@
+#https://leetcode-cn.com/problems/cut-off-trees-for-golf-event/
+
+class Solution:
+
+    def checkvalue(self,l,i,j):
+        try:
+            a = l[i][j-1]
+        except:
+            a = 0
+            
+        try:
+            b = l[i][j+1]
+        except:
+            b = 0
+            
+        try:
+            c = l[i-1][j]
+        except:
+            c = 0
+            
+        try:
+            d = l[i+1][j]
+        except:
+            d = 0
+        
+        return (a + b + c + d)
+        
+        
+    def cutOffTree(self, forest: List[List[int]]) -> int:
+        f = forest
+        l_f = []
+        for a in f:
+            for b in a:
+                j = a.index(b)
+                i = f.index(a)
+                check = self.checkvalue(f,i,j)
+                if f[i][j] != 0 and check==0:
+                    print(i,j)
+                    return -1
+                else:
+                    l_f.append((f[i][j],i,j))
+        
+        l_f.sort()
+        for w in l_f:
+            if w[0] == 0:
+                continue
+            
+        
+        
+        
+        
+        
+
