@@ -1,0 +1,66 @@
+
+视频（参考）
+爬虫视频：链接：https://pan.baidu.com/s/1t594r3Stih-Tye6UcJsqPg 
+提取码：ql94 
+机器学习：链接：https://pan.baidu.com/s/1JMMruIDljMxRqeUYb-Mo1w 
+提取码：qdy0
+15人已读张又亮 发表于 01-17 11:25
+
+
+爬虫参考资料
+反爬：https://www.jianshu.com/p/b61f77ba99bc
+爬取的作用：https://www.zhihu.com/question/36132174
+相关项目：https://github.com/Germey
+scrapy_redis详解:https://www.biaodianfu.com/scrapy-redis.html
+16人已读张又亮 发表于 01-17 17:42
+
+
+视频、课件和项目
+链接：https://pan.baidu.com/s/1BIz59bDw4_cmzAvZGT-tQA 
+提取码：f6cb
+15人已读张又亮 发表于 02-18 17:52
+
+
+参考博客
+线性回归：https://www.cnblogs.com/Belter/p/8487002.htm
+逻辑回归：https://blog.csdn.net/zjuPeco/article/details/77165974
+支持向量机：http://blog.pluskid.org/?page_id=683
+SVM的SMO：https://blog.csdn.net/vfgbv/article/details/79400049
+特征工程：https://blog.csdn.net/v_JULY_v/article/details/81319999
+收起
+5人已读张又亮 发表于 02-27 17:48
+
+
+机器学习教学视频（完整版）
+链接：https://pan.baidu.com/s/1U0jg3Mn0cIn9rB2rhksISQ 
+提取码：vnbm
+8人已读张又亮 发表于 02-28 20:27
+
+
+项目参考链接
+信用评分模型：
+https://www.jianshu.com/p/f931a4df202c
+https://www.jianshu.com/p/159f381c661d
+泰坦尼克生还率预测：
+https://www.kaggle.com/c/titanic
+https://www.kaggle.com/ldfreeman3/a-data-science-framework-to-achieve-99-accuracy
+活动推荐系统：https://www.kaggle.com/c/event-recommendation-engine-challenge#evaluation
+https://blog.csdn.net/Mr_tyting/article/details/73718150
+酒店推荐系统：https://www.kaggle.com/c/expedia-hotel-recommendations
+收起
+5人已读张又亮 发表于 03-01 16:16
+
+
+项目参考链接(2)
+客户流失分析：https://blog.csdn.net/weixin_41761857/article/details/82026170
+https://github.com/Azure/MachineLearningSamples-ChurnPrediction
+房价分析：
+https://www.jianshu.com/p/9455ef3e3dbe
+https://www.jianshu.com/p/814dee157e6e
+违约预测：
+https://www.jianshu.com/p/6eb58b0be7c8
+https://www.jianshu.com/p/d878f3fe037c
+收起
+11人已读张又亮 发表于 03-01 17:26
+
+
